@@ -16,11 +16,21 @@ th, td { border:1px solid #ccc; padding:5px; text-align:center; }
 th { background:#f0f0f0; }
 #backend { margin-top:20px; border-top:2px solid #000; padding-top:10px; }
 
-/* 前台輸入區字體略小一點，仍比原始大 */
-div { font-size: 1.5em; margin-bottom:10px; }
-div > input, div > select, #addBtn {
-  font-size: 1.7em;  /* 欄位和按鈕略小 */
-  padding:9px;
+/* 標籤文字 1.7em */
+div { font-size: 1.7em; margin-bottom:10px; }
+
+/* 日期 / 商品 / 份數欄位稍小 1.4em */
+#dateInput, #productSelect, #qtyInput {
+  font-size: 1.4em;
+  padding:8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 新增按鈕稍小 1.4em */
+#addBtn {
+  font-size: 1.4em;
+  padding:8px;
   width: 100%;
   box-sizing: border-box;
 }
