@@ -1,10 +1,11 @@
 {
   "name": "甜點記帳",
   "short_name": "甜點記帳",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#f39c12",
+  "description": "簡單記錄每日甜點銷售與成本",
   "icons": [
     {
       "src": "icon.png",
