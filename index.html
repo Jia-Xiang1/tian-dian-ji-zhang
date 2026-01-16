@@ -7,39 +7,66 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f39c12">
 <style>
-body { font-family: Arial; max-width:700px; margin:auto; padding:20px; }
-table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td { border:1px solid #ccc; padding:5px; text-align:center; }
-th { background:#f0f0f0; }
-#backend { margin-top:20px; border-top:2px solid #000; padding-top:10px; }
+body { 
+  font-family: Arial; 
+  max-width:700px; 
+  margin:auto; 
+  padding:16px; 
+}
 
-/* 標籤文字 1.7em */
-div { font-size: 1.7em; margin-bottom:10px; }
+table { 
+  width:100%; 
+  border-collapse:collapse; 
+  margin-top:10px; 
+}
 
-/* 日期欄位 / 份數欄位 1.4em */
+th, td { 
+  border:1px solid #ccc; 
+  padding:5px; 
+  text-align:center; 
+}
+
+th { 
+  background:#f0f0f0; 
+}
+
+#backend { 
+  margin-top:16px; 
+  border-top:2px solid #000; 
+  padding-top:8px; 
+}
+
+/* 標籤文字（小但清楚） */
+div { 
+  font-size: 1.4em; 
+  margin-bottom:6px; 
+}
+
+/* 日期 / 份數 */
 #dateInput, #qtyInput {
-  font-size: 0.7em;
-  padding:1px;
-  width:50%;
-  box-sizing:border-box;
+  font-size: 1.15em;   /* 極限下限 */
+  padding: 4px;        /* 還能點 */
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* 商品下拉選單 1.2em */
+/* 商品下拉選單 */
 #productSelect {
-  font-size: 0.7em;
-  padding:1px;
-  width:50%;
-  box-sizing:border-box;
+  font-size: 1.1em;    /* 再小會被 iOS 放大 */
+  padding: 3px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-/* 新增按鈕 1.4em */
+/* 新增按鈕 */
 #addBtn {
-  font-size: 0.8em;
-  padding:1px;
-  width:50%;
-  box-sizing:border-box;
+  font-size: 1.2em;
+  padding: 8px;        /* 高度 ≈ 44px */
+  width: 100%;
+  box-sizing: border-box;
 }
 </style>
+
 </head>
 <body>
 
