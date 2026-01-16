@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>甜點記帳</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 <meta name="theme-color" content="#f39c12">
 <style>
 body { font-family: Arial; max-width:700px; margin:auto; padding:20px; }
@@ -27,7 +24,7 @@ div { font-size: 1.7em; margin-bottom:10px; }
   box-sizing:border-box;
 }
 
-/* 商品下拉選單 1.2em，展開框較小 */
+/* 商品下拉選單 1.2em */
 #productSelect {
   font-size: 1.2em;
   padding:6px;
@@ -48,7 +45,6 @@ div { font-size: 1.7em; margin-bottom:10px; }
 
 <h2>甜點銷售記帳</h2>
 
-<!-- 前台輸入 -->
 <div>
   日期:<br>
   <input type="date" id="dateInput">
@@ -89,7 +85,6 @@ div { font-size: 1.7em; margin-bottom:10px; }
 </tfoot>
 </table>
 
-<!-- 後台管理 -->
 <div id="backend">
 <h3>後台管理（成本 / 售價 / 分類）</h3>
 密碼: <input type="password" id="adminPwdInput"> <button onclick="unlockBackend()">解鎖</button>
@@ -110,8 +105,7 @@ div { font-size: 1.7em; margin-bottom:10px; }
 </div>
 
 <script>
-// ===== 後台密碼 =====
-const adminPassword = "1234"; // 可自行修改
+const adminPassword = "1234"; 
 
 function unlockBackend(){
   const input = document.getElementById('adminPwdInput').value;
@@ -123,7 +117,6 @@ function unlockBackend(){
   }
 }
 
-// ===== 初始商品 =====
 let products = JSON.parse(localStorage.getItem('products')) || [
   {name:'雞蛋糕', price:50, cost:20, category:'甜點'},
   {name:'奶酪杯', price:60, cost:25, category:'甜點'},
@@ -137,7 +130,6 @@ let products = JSON.parse(localStorage.getItem('products')) || [
 
 let salesRecords = JSON.parse(localStorage.getItem('salesRecords')) || [];
 
-// ===== 前台下拉 =====
 function updateProductSelect(){
   const select = document.getElementById('productSelect');
   select.innerHTML='';
@@ -150,7 +142,6 @@ function updateProductSelect(){
 }
 updateProductSelect();
 
-// ===== 渲染銷售 =====
 function renderSales(){
   const list = document.getElementById('salesList');
   list.innerHTML='';
@@ -178,7 +169,6 @@ function renderSales(){
   document.getElementById('totalProfit').innerText=totalProfit;
 }
 
-// ===== 新增銷售 =====
 function addSale(){
   const date = document.getElementById('dateInput').value;
   const productIndex = parseInt(document.getElementById('productSelect').value);
@@ -190,7 +180,6 @@ function addSale(){
   renderSales();
 }
 
-// ===== 刪除銷售 =====
 function deleteSale(idx){
   if(confirm('確定刪除這筆銷售紀錄？')){
     salesRecords.splice(idx,1);
@@ -199,7 +188,6 @@ function deleteSale(idx){
   }
 }
 
-// ===== 後台管理 =====
 function renderBackend(){
   const list = document.getElementById('productList');
   list.innerHTML='';
@@ -216,7 +204,6 @@ function renderBackend(){
   });
 }
 
-// ===== 更新商品 =====
 function updateProduct(idx, field, value){
   if(field==='price' || field==='cost') value=parseFloat(value);
   products[idx][field]=value;
@@ -226,7 +213,6 @@ function updateProduct(idx, field, value){
   renderBackend();
 }
 
-// ===== 刪除商品 =====
 function deleteProduct(idx){
   if(confirm('確定刪除這個商品？')){
     products.splice(idx,1);
@@ -237,7 +223,6 @@ function deleteProduct(idx){
   }
 }
 
-// ===== 初始渲染 =====
 renderSales();
 renderBackend();
 </script>
