@@ -11,15 +11,19 @@
 <meta name="theme-color" content="#f39c12">
 <style>
 body { font-family: Arial; max-width:700px; margin:auto; padding:20px; }
-input, select, button { margin:5px 0; width: 100%; box-sizing:border-box; }
-#dateInput, #productSelect, #qtyInput, #addBtn {
-  font-size: 1.4em;  /* 字體加大 */
-  padding:8px;        /* 欄位與按鈕都加大 */
-}
 table { width:100%; border-collapse:collapse; margin-top:10px; }
 th, td { border:1px solid #ccc; padding:5px; text-align:center; }
 th { background:#f0f0f0; }
 #backend { margin-top:20px; border-top:2px solid #000; padding-top:10px; }
+
+/* 前台輸入區字體大化 */
+div { font-size: 1.6em; margin-bottom:10px; }
+div > input, div > select, #addBtn {
+  font-size: 1.8em;  /* 欄位和按鈕字體更大 */
+  padding:10px;
+  width: 100%;
+  box-sizing: border-box;
+}
 </style>
 </head>
 <body>
@@ -28,10 +32,19 @@ th { background:#f0f0f0; }
 
 <!-- 前台輸入 -->
 <div>
-  <div>日期:<br><input type="date" id="dateInput"></div>
-  <div>商品:<br><select id="productSelect"></select></div>
-  <div>份數:<br><input type="number" id="qtyInput" min="1"></div>
-  <div><button id="addBtn" onclick="addSale()">新增</button></div>
+  日期:<br>
+  <input type="date" id="dateInput">
+</div>
+<div>
+  商品:<br>
+  <select id="productSelect"></select>
+</div>
+<div>
+  份數:<br>
+  <input type="number" id="qtyInput" min="1">
+</div>
+<div>
+  <button id="addBtn" onclick="addSale()">新增</button>
 </div>
 
 <table>
@@ -80,7 +93,7 @@ th { background:#f0f0f0; }
 
 <script>
 // ===== 後台密碼 =====
-const adminPassword = "0000"; // 可自行修改
+const adminPassword = "1234"; // 可自行修改
 
 function unlockBackend(){
   const input = document.getElementById('adminPwdInput').value;
@@ -213,4 +226,3 @@ renderBackend();
 
 </body>
 </html>
-
