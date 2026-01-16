@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>甜點記帳 PWA</title>
+<link rel="manifest" href="manifest.json">
+<style>
+body { font-family: Arial; max-width:700px; margin:auto; padding:20px; }
+input, select, button { padding:5px; margin:3px; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #ccc; padding:5px; text-align:center; }
+th { background:#f0f0f0; }
+#backend { margin-top:20px; border-top:2px solid #000; padding-top:10px; }
+</style>
+</head>
+<body>
+
+<h2>甜點銷售記帳 (PWA 版)</h2>
+
+<!-- 前台輸入 -->
+<div>
+  日期: <input type="date" id="dateInput">
+  商品: <select id="productSelect"></select>
+  份數: <input type="number" id="qtyInput" min="1">
+  <button onclick="addSale()">新增</button>
+</div>
+
+<div style="margin-top:10px;">
+  篩選分類: 
+  <select id="filterCategory" onchange="renderSales()">
+    <option value="">全部</option>
+  </select>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>日期</th>
+<th>商品</th>
+<th>份數</th>
+<th>售價</th>
+<th>成本</th>
+<th>收入</th>
+<th>利潤</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody id="salesList"></tbody>
+<tfoot>
+<tr>
+<th colspan="5">總計</th>
+<th id="totalRevenue">0</th>
+<th id="totalProfit">0</th>
+<th></th>
+</tr>
+</tfoot>
+</table>
+
+<!-- 後台管理 -->
+<div id="backend">
+<h3>後台管理（成本 / 售價 / 分類）</h3>
+密碼: <input type="password" id="adminPwdInput"> <button onclick="unlockBackend()">解鎖</button>
+<div id="backendContent" style="display:none;">
+<table>
+<thead>
+<tr>
+<th>商品</th>
+<th>售價</th>
+<th>成本</th>
+<th>分類</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody id="productList"></tbody>
+</table>
+</div>
+</div>
+
+<script>
+// ===== 後台密碼 =====
+const adminPassword = "1234"; // 可自行修改
+
+function unlockBackend(){
+  const input = document.getElementById('adminPwdInput').value;
+  if(input === adminPassword){
+    document.getElementById('backendContent').style.display='block';
+    alert('後台已解鎖');
+  }else{
+    alert('密碼錯誤');
+  }
+}
+
+// ===== 初始商品 =====
+let products = JSON.parse(localStorage.getItem('products')) || [
+  {name:'雞蛋糕', price:50, cost:20, category:'甜點'},
+  {name:'奶酪杯', price:60, cost:25, category:'甜點'},
+  {name:'提拉米蘇杯', price:70, cost:30, category:'甜點'},
+  {name:'雪媚娘', price:55, cost:25, category:'甜點'},
+  {name:'紅糖糍粑', price:40, cost:15, category:'甜點'},
+  {name:'奶茶凍', price:50, cost:20, category:'飲品'},
+  {name:'桂花奶酪', price:60, cost:25, category:'甜點'},
+  {name:'華夫餅', price:65, cost:30, category:'甜點'}
+];
+
+let salesRecords = JSON.parse(localStorage.getItem('salesRecords')) || [];
+
+// ===== 前台下拉 =====
+function updateProductSelect(){
+  const select = document.getElementById('productSelect');
+  select.innerHTML='';
+  products.forEach((p,i)=>{
+    const opt = document.createElement('option');
+    opt.value=i;
+    opt.innerText=p.name;
+    select.appendChild(opt);
+  });
+}
+updateProductSelect();
+
+// ===== 後台分類下拉 =====
+function updateCategoryFilter(){
+  const filter = document.getElementById('filterCategory');
+  const categories = [...new Set(products.map(p=>p.category))];
+  filter.innerHTML = '<option value="">全部</option>';
+  categories.forEach(c=>{
+    const opt = document.createElement('option');
+    opt.value=c;
+    opt.innerText=c;
+    filter.appendChild(opt);
+  });
+}
+
+// ===== 渲染銷售 =====
+function renderSales(){
+  const list = document.getElementById('salesList');
+  const filterVal = document.getElementById('filterCategory').value;
+  list.innerHTML='';
+  let totalRevenue=0, totalProfit=0;
+  const filtered = filterVal ? salesRecords.filter(r=>products[r.productIndex].category===filterVal) : salesRecords;
+  filtered.forEach((r,idx)=>{
+    const p = products[r.productIndex];
+    const revenue = p.price * r.qty;
+    const profit = revenue - (p.cost * r.qty);
+    totalRevenue += revenue;
+    totalProfit += profit;
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td>${r.date}</td>
+      <td>${p.name}</td>
+      <td>${r.qty}</td>
+      <td>${p.price}</td>
+      <td>${p.cost}</td>
+      <td>${revenue}</td>
+      <td>${profit}</td>
+      <td><button onclick="deleteSale(${salesRecords.indexOf(r)})">刪除</button></td>
+    `;
+    list.appendChild(tr);
+  });
+  document.getElementById('totalRevenue').innerText=totalRevenue;
+  document.getElementById('totalProfit').innerText=totalProfit;
+  updateCategoryFilter();
+}
+
+// ===== 新增銷售 =====
+function addSale(){
+  const date = document.getElementById('dateInput').value;
+  const productIndex = parseInt(document.getElementById('productSelect').value);
+  const qty = parseInt(document.getElementById('qtyInput').value);
+  if(!date || isNaN(qty) || qty<=0) return alert('請輸入日期及份數');
+  salesRecords.push({date, productIndex, qty});
+  localStorage.setItem('salesRecords', JSON.stringify(salesRecords));
+  document.getElementById('qtyInput').value='';
+  renderSales();
+}
+
+// ===== 刪除銷售 =====
+function deleteSale(idx){
+  if(confirm('確定刪除這筆銷售紀錄？')){
+    salesRecords.splice(idx,1);
+    localStorage.setItem('salesRecords', JSON.stringify(salesRecords));
+    renderSales();
+  }
+}
+
+// ===== 後台管理 =====
+function renderBackend(){
+  const list = document.getElementById('productList');
+  list.innerHTML='';
+  products.forEach((p,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML=`
+      <td>${p.name}</td>
+      <td><input type="number" value="${p.price}" onchange="updateProduct(${i}, 'price', this.value)"></td>
+      <td><input type="number" value="${p.cost}" onchange="updateProduct(${i}, 'cost', this.value)"></td>
+      <td><input type="text" value="${p.category}" onchange="updateProduct(${i}, 'category', this.value)"></td>
+      <td><button onclick="deleteProduct(${i})">刪除</button></td>
+    `;
+    list.appendChild(tr);
+  });
+}
+
+// ===== 更新商品 =====
+function updateProduct(idx, field, value){
+  if(field==='price' || field==='cost') value=parseFloat(value);
+  products[idx][field]=value;
+  localStorage.setItem('products', JSON.stringify(products));
+  updateProductSelect();
+  renderSales();
+  renderBackend();
+}
+
+// ===== 刪除商品 =====
+function deleteProduct(idx){
+  if(confirm('確定刪除這個商品？')){
+    products.splice(idx,1);
+    localStorage.setItem('products', JSON.stringify(products));
+    updateProductSelect();
+    renderSales();
+    renderBackend();
+  }
+}
+
+// ===== 初始渲染 =====
+renderSales();
+renderBackend();
+</script>
+
+</body>
+</html>
