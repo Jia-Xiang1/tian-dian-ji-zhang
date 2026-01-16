@@ -3,11 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>甜點記帳 </title>
+<title>甜點記帳</title>
 <link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+<meta name="theme-color" content="#f39c12">
 <style>
 body { font-family: Arial; max-width:700px; margin:auto; padding:20px; }
-input, select, button { padding:5px; margin:3px; }
+input, select, button { padding:5px; margin:5px 0; width: 100%; box-sizing:border-box; }
 table { width:100%; border-collapse:collapse; margin-top:10px; }
 th, td { border:1px solid #ccc; padding:5px; text-align:center; }
 th { background:#f0f0f0; }
@@ -20,17 +24,10 @@ th { background:#f0f0f0; }
 
 <!-- 前台輸入 -->
 <div>
-  日期: <input type="date" id="dateInput">
-  商品: <select id="productSelect"></select>
-  份數: <input type="number" id="qtyInput" min="1">
-  <button onclick="addSale()">新增</button>
-</div>
-
-<div style="margin-top:10px;">
-  篩選分類: 
-  <select id="filterCategory" onchange="renderSales()">
-    <option value="">全部</option>
-  </select>
+  <div>日期:<br><input type="date" id="dateInput"></div>
+  <div>商品:<br><select id="productSelect"></select></div>
+  <div>份數:<br><input type="number" id="qtyInput" min="1"></div>
+  <div><button onclick="addSale()">新增</button></div>
 </div>
 
 <table>
@@ -118,27 +115,12 @@ function updateProductSelect(){
 }
 updateProductSelect();
 
-// ===== 後台分類下拉 =====
-function updateCategoryFilter(){
-  const filter = document.getElementById('filterCategory');
-  const categories = [...new Set(products.map(p=>p.category))];
-  filter.innerHTML = '<option value="">全部</option>';
-  categories.forEach(c=>{
-    const opt = document.createElement('option');
-    opt.value=c;
-    opt.innerText=c;
-    filter.appendChild(opt);
-  });
-}
-
 // ===== 渲染銷售 =====
 function renderSales(){
   const list = document.getElementById('salesList');
-  const filterVal = document.getElementById('filterCategory').value;
   list.innerHTML='';
   let totalRevenue=0, totalProfit=0;
-  const filtered = filterVal ? salesRecords.filter(r=>products[r.productIndex].category===filterVal) : salesRecords;
-  filtered.forEach((r,idx)=>{
+  salesRecords.forEach((r,idx)=>{
     const p = products[r.productIndex];
     const revenue = p.price * r.qty;
     const profit = revenue - (p.cost * r.qty);
@@ -159,7 +141,6 @@ function renderSales(){
   });
   document.getElementById('totalRevenue').innerText=totalRevenue;
   document.getElementById('totalProfit').innerText=totalProfit;
-  updateCategoryFilter();
 }
 
 // ===== 新增銷售 =====
