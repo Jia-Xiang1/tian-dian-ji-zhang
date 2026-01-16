@@ -11,7 +11,11 @@
 <meta name="theme-color" content="#f39c12">
 <style>
 body { font-family: Arial; max-width:700px; margin:auto; padding:20px; }
-input, select, button { padding:5px; margin:5px 0; width: 100%; box-sizing:border-box; }
+input, select, button { margin:5px 0; width: 100%; box-sizing:border-box; }
+#dateInput, #productSelect, #qtyInput, #addBtn {
+  font-size: 1.4em;  /* 字體加大 */
+  padding:8px;        /* 欄位與按鈕都加大 */
+}
 table { width:100%; border-collapse:collapse; margin-top:10px; }
 th, td { border:1px solid #ccc; padding:5px; text-align:center; }
 th { background:#f0f0f0; }
@@ -27,7 +31,7 @@ th { background:#f0f0f0; }
   <div>日期:<br><input type="date" id="dateInput"></div>
   <div>商品:<br><select id="productSelect"></select></div>
   <div>份數:<br><input type="number" id="qtyInput" min="1"></div>
-  <div><button onclick="addSale()">新增</button></div>
+  <div><button id="addBtn" onclick="addSale()">新增</button></div>
 </div>
 
 <table>
@@ -76,7 +80,7 @@ th { background:#f0f0f0; }
 
 <script>
 // ===== 後台密碼 =====
-const adminPassword = "1234"; // 可自行修改
+const adminPassword = "0000"; // 可自行修改
 
 function unlockBackend(){
   const input = document.getElementById('adminPwdInput').value;
@@ -209,3 +213,4 @@ renderBackend();
 
 </body>
 </html>
+
