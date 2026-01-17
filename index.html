@@ -14,6 +14,7 @@ body {
   padding:16px;
 }
 
+/* 通用卡片 */
 .card {
   background:#fff;
   border-radius:14px;
@@ -23,140 +24,304 @@ body {
   text-align:center;
 }
 
+/* 所有輸入安全設定 */
 input, select, button {
   font-size:16px;
-  height:40px;
+  height:44px;
   width:100%;
+  box-sizing:border-box;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   background:#f2f2f7;
   text-align:center;
 }
 
-#dateInput, #productSelect {
-  background:#fff;
-  width:60%;
-  max-width:300px;
-  margin:0 auto;
-  display:block;
+/* 日期輸入框 */
+#dateInput {
+  background: #fff;   
+  border: none;       
+  width: 60%;         
+  max-width: 300px;   
+  margin: 0 auto;     
+  display: block;     
+  text-align: center; 
+  height: 32px;       
+  line-height: 32px;  
+  border-radius: 8px; 
 }
 
+/* 商品選擇欄文字置中 */
+#productSelect {
+  width: 60%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
+  text-align-last: center;
+  -moz-text-align-last: center;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 32px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* 代號輸入專用卡片 */
+.code-card {
+  width: 80%;
+  margin: 0 auto 14px auto;
+}
+.code-card input {
+  width: 90%;
+  max-width: 280px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* 按鈕 */
 button {
   background:#007aff;
   color:#fff;
 }
 
-/* 遮罩 */
-#lock {
-  position:fixed;
-  inset:0;
-  background:#f2f2f7;
+/* 表格 */
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+th, td {
+  border:1px solid #ccc;
+  padding:6px;
+  text-align:center; 
+}
+th {
+  background:#f0f0f0;
+}
+
+/* 後台商品卡片 */
+.product-card {
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+/* 商品成本/售價列 */
+.product-row {
   display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:99;
+  justify-content:space-between;
+  gap:4%;
+}
+.product-row div input {
+  width:100%;
+  margin-top:4px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🔒 代號輸入遮罩 -->
-<div id="lock">
-  <div class="card" style="width:80%">
-    <h3>請輸入代號</h3>
-    <input id="codeInput" placeholder="代號">
-    <br><br>
-    <button onclick="unlock()">進入</button>
-  </div>
-</div>
-
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
+<!-- 輸入代號 -->
+<div class="card code-card">
+  代號
+  <input type="text" id="userCode" placeholder="請輸入代號">
+</div>
+
+<!-- 日期 -->
 <div class="card">
   日期
   <input type="date" id="dateInput">
 </div>
 
+<!-- 商品 -->
 <div class="card">
   商品
   <select id="productSelect"></select>
 </div>
 
+<!-- 份數 -->
 <div class="card">
   份數
   <input type="number" id="qtyInput" min="1" value="1">
 </div>
 
+<!-- 新增 -->
 <div class="card">
   <button onclick="addSale()">新增銷售</button>
 </div>
 
+<!-- 銷售表格 -->
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>代號</th><th>刪除</th>
+</tr>
+</thead>
+<tbody id="salesList"></tbody>
+</table>
+</div>
+
+<!-- 今日統計 -->
+<div class="card">
+  今日成本：<span id="totalCost">0</span><br>
+  今日收入：<span id="totalRevenue">0</span><br>
+  今日利潤：<span id="totalProfit">0</span>
+</div>
+
+<!-- 後台密碼 -->
+<div class="card code-card">
+  <input type="password" id="adminPwd" placeholder="後台密碼">
+  <button onclick="unlockBackend()">進入後台</button>
+</div>
+
+<!-- 後台 -->
+<div id="backend" style="display:none" class="card">
+<h3>商品管理</h3>
+<div id="productList"></div>
+
+<!-- 新增商品區 -->
+<div class="product-card">
+  <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
+  <div class="product-row">
+    <div style="flex:1; text-align:center;">商品名稱
+      <input id="newName" placeholder="名稱">
+    </div>
+    <div style="flex:1; text-align:center;">成本
+      <input id="newCost" type="number" placeholder="成本">
+    </div>
+    <div style="flex:1; text-align:center;">售價
+      <input id="newPrice" type="number" placeholder="售價">
+    </div>
+  </div>
+  <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
+</div>
+
+</div>
+
 <script>
-/* ====== 設定 ====== */
-const GAS_URL = "請貼上你的 GAS Web App 網址";
-let products = [];
-let userCode = "";
+// 範例產品
+let products=JSON.parse(localStorage.getItem("products"))||[
+{name:"雞蛋糕",cost:20,price:50},
+{name:"奶酪杯",cost:25,price:60},
+{name:"提拉米蘇杯",cost:30,price:70},
+{name:"雪媚娘",cost:25,price:55},
+{name:"紅糖糍粑",cost:15,price:40},
+{name:"奶茶凍",cost:20,price:50},
+{name:"桂花奶酪",cost:25,price:60},
+{name:"華夫餅",cost:30,price:65}
+];
 
-/* 解鎖 */
-function unlock() {
-  const c = document.getElementById("codeInput").value.trim();
-  if (!c) {
-    alert("請輸入代號");
-    return;
-  }
-  userCode = c;
-  document.getElementById("lock").style.display = "none";
+let sales=JSON.parse(localStorage.getItem("sales"))||[];
+
+function save(){
+  localStorage.setItem("products",JSON.stringify(products));
+  localStorage.setItem("sales",JSON.stringify(sales));
 }
 
-/* 讀商品 */
-function loadProducts() {
-  fetch(`${GAS_URL}?type=products`)
-    .then(r => r.json())
-    .then(data => {
-      products = data;
-      const s = document.getElementById("productSelect");
-      s.innerHTML = "";
-      products.forEach((p,i)=>{
-        const o = document.createElement("option");
-        o.value=i;
-        o.textContent=p.name;
-        s.appendChild(o);
-      });
-    });
-}
-
-/* 新增販售 */
-function addSale() {
-  if (!userCode) {
-    alert("請先輸入代號");
-    return;
-  }
-
-  const date = dateInput.value;
-  const qty = parseInt(qtyInput.value);
-  const p = products[productSelect.value];
-
-  if (!date || qty<=0) return;
-
-  fetch(GAS_URL, {
-    method:"POST",
-    body:JSON.stringify({
-      type:"sale",
-      code:userCode,     // ← 代號一併送出
-      date:date,
-      product:p.name,
-      qty:qty,
-      price:p.price
-    })
-  })
-  .then(()=> {
-    alert("已新增");
-    qtyInput.value = 1;
+function updateSelect(){
+  const s=document.getElementById("productSelect");
+  s.innerHTML="";
+  products.forEach((p,i)=>{
+    const o=document.createElement("option");
+    o.value=i;
+    o.textContent=p.name;
+    s.appendChild(o);
   });
 }
 
-loadProducts();
+function addSale(){
+  const code=document.getElementById("userCode").value.trim();
+  const d=document.getElementById("dateInput").value;
+  const i=document.getElementById("productSelect").value;
+  const q=parseInt(document.getElementById("qtyInput").value);
+  if(!code){alert("請輸入代號"); return;}
+  if(!d||q<=0) return;
+  sales.push({code, d,i,q});
+  save();
+  renderSales();
+  // 這裡可以呼叫 Google Apps Script API，傳送 code/d/i/q
+}
+
+function renderSales(){
+  const list=document.getElementById("salesList");
+  list.innerHTML="";
+  let cost=0, rev=0;
+  sales.forEach((s,idx)=>{
+    const p=products[s.i];
+    const r=p.price*s.q;
+    cost+=p.cost*s.q;
+    rev+=r;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+    <td>${s.d.slice(5)}</td>
+    <td>${p.name}</td>
+    <td>${s.q}</td>
+    <td>${r}</td>
+    <td>${s.code}</td>
+    <td><button onclick="delSale(${idx})">刪除</button></td>`;
+    list.appendChild(tr);
+  });
+  document.getElementById("totalCost").textContent=cost;
+  document.getElementById("totalRevenue").textContent=rev;
+  document.getElementById("totalProfit").textContent=rev-cost;
+}
+
+function delSale(i){
+  if(confirm("確定刪除這筆銷售？")){
+    sales.splice(i,1);
+    save(); renderSales();
+  }
+}
+
+const adminPassword="1234";
+function unlockBackend(){
+  if(document.getElementById("adminPwd").value===adminPassword){
+    document.getElementById("backend").style.display="block";
+  } else alert("密碼錯誤");
+}
+
+function renderBackend(){
+  const box=document.getElementById("productList");
+  box.innerHTML="";
+  products.forEach((p,i)=>{
+    const d=document.createElement("div");
+    d.className="product-card";
+    d.innerHTML=`
+    <div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
+    <div class="product-row">
+      <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
+      <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
+    </div>
+    <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
+    box.appendChild(d);
+  });
+}
+
+function updateP(i,f,v){
+  products[i][f]=parseFloat(v);
+  save(); updateSelect(); renderSales();
+}
+
+function delProduct(i){
+  if(confirm("確定刪除商品？")){
+    products.splice(i,1);
+    save(); updateSelect(); renderBackend(); renderSales();
+  }
+}
+
+function addProduct(){
+  const n=newName.value;
+  const c=parseFloat(newCost.value);
+  const p=parseFloat(newPrice.value);
+  if(!n||!c||!p) return;
+  products.push({name:n, cost:c, price:p});
+  save(); updateSelect(); renderBackend();
+  newName.value=newCost.value=newPrice.value="";
+}
+
+updateSelect(); renderSales(); renderBackend();
 </script>
 
 </body>
