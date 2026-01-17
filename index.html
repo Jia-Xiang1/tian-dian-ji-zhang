@@ -5,27 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>甜點銷售記帳</title>
 <style>
-body { font-family:-apple-system,BlinkMacSystemFont,Arial; max-width:700px; margin:auto; padding:16px; background:#f2f2f7; }
+body { font-family: -apple-system, BlinkMacSystemFont, Arial; background:#f2f2f7; max-width:700px; margin:auto; padding:16px; }
 .card { background:#fff; border-radius:14px; padding:12px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center; }
 input, select, button { font-size:16px; height:44px; width:100%; box-sizing:border-box; border:none; border-radius:12px; background:#f2f2f7; text-align:center; }
-#dateInput, #productSelect { background:#fff; width:60%; max-width:300px; margin:0 auto; display:block; height:32px; line-height:32px; border-radius:8px; text-align:center; }
-#productSelect { text-align-last:center; -moz-text-align-last:center; -webkit-appearance:none; appearance:none; }
+#dateInput, #productSelect { background:#fff; border-radius:8px; display:block; margin:0 auto; text-align:center; height:32px; line-height:32px; }
+#productSelect { text-align-last:center; -moz-text-align-last:center; -webkit-appearance:none; appearance:none; width:60%; max-width:300px; }
 table { width:100%; border-collapse:collapse; }
 th, td { border:1px solid #ccc; padding:6px; text-align:center; }
 th { background:#f0f0f0; }
-#stats { display:flex; justify-content:space-around; font-weight:bold; padding:8px 0; }
 .admin-row { display:flex; gap:10px; }
 .admin-row input, .admin-row button { flex:1; }
 .product-card { border:1px solid #ddd; border-radius:12px; padding:10px; margin-bottom:10px; }
 .product-row { display:flex; justify-content:space-between; gap:4%; }
 .product-row div input { width:100%; margin-top:4px; }
+#stats { display:flex; justify-content:space-around; font-weight:bold; padding:8px 0; }
 </style>
 </head>
 <body>
 
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
-<!-- 登入代號 -->
+<!-- 第一層：代號登入 -->
 <div class="card" id="loginCard">
   輸入代號
   <input type="text" id="userCode" placeholder="代號">
@@ -35,10 +35,24 @@ th { background:#f0f0f0; }
 <!-- 主界面 -->
 <div id="mainInterface" style="display:none">
 
-  <div class="card">日期<input type="date" id="dateInput"></div>
-  <div class="card">商品<select id="productSelect"></select></div>
-  <div class="card">份數<input type="number" id="qtyInput" min="1" value="1"></div>
-  <div class="card"><button onclick="addSale()">新增銷售</button></div>
+  <div class="card">
+    日期
+    <input type="date" id="dateInput">
+  </div>
+
+  <div class="card">
+    商品
+    <select id="productSelect"></select>
+  </div>
+
+  <div class="card">
+    份數
+    <input type="number" id="qtyInput" min="1" value="1">
+  </div>
+
+  <div class="card">
+    <button onclick="addSale()">新增銷售</button>
+  </div>
 
   <div class="card">
     <table>
@@ -53,22 +67,42 @@ th { background:#f0f0f0; }
     <div>今日利潤：<span id="totalProfit">0</span></div>
   </div>
 
+  <div class="card">
+    <div class="admin-row">
+      <input type="password" id="adminPwd" placeholder="後台密碼">
+      <button onclick="unlockBackend()">進入後台</button>
+    </div>
+  </div>
+
+  <div id="backend" style="display:none" class="card">
+    <h3>商品管理</h3>
+    <div id="productList"></div>
+
+    <div class="product-card">
+      <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
+      <div class="product-row">
+        <div style="flex:1; text-align:center;">商品名稱<input id="newName" placeholder="名稱"></div>
+        <div style="flex:1; text-align:center;">成本<input id="newCost" type="number" placeholder="成本"></div>
+        <div style="flex:1; text-align:center;">售價<input id="newPrice" type="number" placeholder="售價"></div>
+      </div>
+      <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
+const adminPassword="1234";
 let userCode = "";
-let products = [
-  {name:"雞蛋糕", cost:20, price:50},
-  {name:"奶酪杯", cost:25, price:60},
-  {name:"提拉米蘇杯", cost:30, price:70},
-  {name:"雪媚娘", cost:25, price:55},
-  {name:"紅糖糍粑", cost:15, price:40},
-  {name:"奶茶凍", cost:20, price:50},
-  {name:"桂花奶酪", cost:25, price:60},
-  {name:"華夫餅", cost:30, price:65}
+let products=JSON.parse(localStorage.getItem("products"))||[
+  {name:"雞蛋糕",cost:20,price:50},{name:"奶酪杯",cost:25,price:60},{name:"提拉米蘇杯",cost:30,price:70},
+  {name:"雪媚娘",cost:25,price:55},{name:"紅糖糍粑",cost:15,price:40},{name:"奶茶凍",cost:20,price:50},
+  {name:"桂花奶酪",cost:25,price:60},{name:"華夫餅",cost:30,price:65}
 ];
-let sales = [];
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyC9yRDuelmE8HMGrlScchdTVviozoJ31LJEBS6kquRq9qBUr-hBJCToSQ5-7rNnuwPGg/exec"; // 改成你的 Web App URL
+let sales=[];
+
+// Web App URL
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw84kzrq1x5V6RMAkJV_xKAjJ18Wx_lTrgntIHGkgf_PplNMVS5z1fPDQrm_6k0udPR/exec";
 
 function loginUser(){
   const code = document.getElementById("userCode").value.trim();
@@ -80,54 +114,44 @@ function loginUser(){
 }
 
 function updateSelect(){
-  const s = document.getElementById("productSelect");
+  const s=document.getElementById("productSelect");
   s.innerHTML="";
-  products.forEach((p,i)=>{
-    const o = document.createElement("option");
-    o.value = i;
-    o.textContent = p.name;
-    s.appendChild(o);
-  });
+  products.forEach((p,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=p.name; s.appendChild(o); });
 }
 
 function addSale(){
-  const d = document.getElementById("dateInput").value;
-  const i = document.getElementById("productSelect").value;
-  const q = parseInt(document.getElementById("qtyInput").value);
-  if(!d || q<=0){ alert("請填寫完整資料"); return; }
-  const p = products[i];
+  const d=document.getElementById("dateInput").value;
+  const i=document.getElementById("productSelect").value;
+  const q=parseInt(document.getElementById("qtyInput").value);
+  if(!d||q<=0){ alert("請填寫完整資料"); return; }
 
-  const saleData = {
-    日期: d,
-    商品: p.name,
-    份數: q,
-    單價: p.price,
-    人員: userCode
-  };
+  const p = products[i];
+  const saleData = { date:d, product:p.name, qty:q, price:p.price, user:userCode };
 
   fetch(WEB_APP_URL, {
     method:"POST",
-    body: JSON.stringify(saleData),
-    headers: {"Content-Type":"application/json"}
+    redirect:"follow",
+    headers: { "Content-Type":"text/plain;charset=utf-8" },
+    body: JSON.stringify(saleData)
   })
   .then(r=>r.json())
   .then(res=>{
     if(res.status==="success"){ sales.push(saleData); renderSales(); }
-    else alert("傳送失敗："+res.msg);
+    else{ alert("新增失敗：" + res.msg); }
   })
-  .catch(e=>{ alert("傳送錯誤"); console.log(e); });
+  .catch(err=>{ console.log(err); alert("傳送錯誤"); });
 }
 
 function renderSales(){
-  const list = document.getElementById("salesList");
+  const list=document.getElementById("salesList");
   list.innerHTML="";
   let cost=0, rev=0;
   sales.forEach((s,idx)=>{
-    const r = s.單價*s.份數;
-    const c = products.find(p=>p.name===s.商品)?.cost*s.份數||0;
-    cost+=c; rev+=r;
-    const tr = document.createElement("tr");
-    tr.innerHTML=`<td>${s.日期.slice(5)}</td><td>${s.商品}</td><td>${s.份數}</td><td>${r}</td><td><button onclick="delSale(${idx})">刪除</button></td>`;
+    const r = s.price*s.qty;
+    cost += products.find(p=>p.name===s.product)?.cost*s.qty||0;
+    rev += r;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${s.date.slice(5)}</td><td>${s.product}</td><td>${s.qty}</td><td>${r}</td><td><button onclick="delSale(${idx})">刪除</button></td>`;
     list.appendChild(tr);
   });
   document.getElementById("totalCost").textContent=cost;
@@ -137,6 +161,29 @@ function renderSales(){
 
 function delSale(i){ if(confirm("確定刪除這筆銷售？")){ sales.splice(i,1); renderSales(); } }
 
+function unlockBackend(){ if(document.getElementById("adminPwd").value===adminPassword) document.getElementById("backend").style.display="block"; else alert("密碼錯誤"); }
+
+function renderBackend(){
+  const box=document.getElementById("productList");
+  box.innerHTML="";
+  products.forEach((p,i)=>{
+    const d=document.createElement("div");
+    d.className="product-card";
+    d.innerHTML=`<div style="margin-bottom:6px;font-weight:bold;">${p.name}</div>
+      <div class="product-row">
+        <div style="flex:1;text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
+        <div style="flex:1;text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
+      </div>
+      <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
+    box.appendChild(d);
+  });
+}
+
+function updateP(i,f,v){ products[i][f]=parseFloat(v); updateSelect(); renderSales(); }
+function delProduct(i){ if(confirm("確定刪除商品？")){ products.splice(i,1); renderBackend(); renderSales(); } }
+function addProduct(){ const n=newName.value; const c=parseFloat(newCost.value); const p=parseFloat(newPrice.value); if(!n||!c||!p)return; products.push({name:n,cost:c,price:p}); renderBackend(); updateSelect(); newName.value=newCost.value=newPrice.value=""; }
+
+updateSelect(); renderBackend();
 </script>
 </body>
 </html>
