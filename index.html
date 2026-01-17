@@ -11,7 +11,7 @@ body {
   max-width:700px; 
   margin:auto; 
   padding:16px; 
-  background:#f2f2f7;   /* iOS 系統底色 */
+  background:#f2f2f7;
 }
 
 table { 
@@ -75,7 +75,7 @@ th {
 }
 
 .custom-select .options {
-  display: none;      /* 預設隱藏 */
+  display: none;
   position: absolute;
   top: 100%;
   left: 0;
@@ -83,7 +83,7 @@ th {
   background: #ffffff;
   border-radius: 10px;
   border: 1px solid #d1d1d6;
-  max-height: 200px;  /* 可滾動 */
+  max-height: 200px;
   overflow-y: auto;
   z-index: 100;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -91,7 +91,7 @@ th {
 
 .custom-select .option {
   padding: 10px;
-  text-align: center;  /* 文字置中 */
+  text-align: center;
 }
 
 .custom-select .option:hover {
@@ -108,6 +108,23 @@ th {
   border-radius:12px;
   background:#007aff;
   color:#fff;
+}
+
+/* 後台欄位 */
+#backend input {
+  font-size:1em;
+  padding:4px;
+  width:60px;
+  margin-right:8px;
+}
+
+/* 統計區塊 */
+#totals {
+  font-size:1.2em;
+  padding:10px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 </style>
 </head>
@@ -140,11 +157,71 @@ th {
 
 <div class="form-card">
   份數<br>
-  <input type="number" id="qtyInput" min="1">
+  <input type="number" id="qtyInput" min="1" value="1">
 </div>
 
 <div class="form-card">
   <button id="addBtn">新增</button>
+</div>
+
+<!-- 顯示表格 -->
+<table id="salesTable">
+  <thead>
+    <tr>
+      <th>日期</th>
+      <th>商品</th>
+      <th>份數</th>
+      <th>成本</th>
+      <th>售價</th>
+      <th>收入</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<!-- 統計區塊 -->
+<div id="totals" class="form-card">
+  <strong>今日總成本：</strong><span id="totalCost">0</span> 元<br>
+  <strong>今日總收入：</strong><span id="totalRevenue">0</span> 元<br>
+  <strong>今日總利潤：</strong><span id="totalProfit">0</span> 元
+</div>
+
+<!-- 後台設定成本售價 -->
+<div id="backend" class="form-card">
+  <h3>後台設定成本與售價（單位：元）</h3>
+  <div>
+    雞蛋糕 成本 <input type="number" id="cost_雞蛋糕" value="10">
+    售價 <input type="number" id="price_雞蛋糕" value="20">
+  </div>
+  <div>
+    奶酪杯 成本 <input type="number" id="cost_奶酪杯" value="8">
+    售價 <input type="number" id="price_奶酪杯" value="15">
+  </div>
+  <div>
+    提拉米蘇杯 成本 <input type="number" id="cost_提拉米蘇杯" value="12">
+    售價 <input type="number" id="price_提拉米蘇杯" value="25">
+  </div>
+  <div>
+    雪媚娘 成本 <input type="number" id="cost_雪媚娘" value="9">
+    售價 <input type="number" id="price_雪媚娘" value="18">
+  </div>
+  <div>
+    紅糖糍粑 成本 <input type="number" id="cost_紅糖糍粑" value="7">
+    售價 <input type="number" id="price_紅糖糍粑" value="14">
+  </div>
+  <div>
+    奶茶凍 成本 <input type="number" id="cost_奶茶凍" value="8">
+    售價 <input type="number" id="price_奶茶凍" value="16">
+  </div>
+  <div>
+    桂花奶酪 成本 <input type="number" id="cost_桂花奶酪" value="9">
+    售價 <input type="number" id="price_桂花奶酪" value="17">
+  </div>
+  <div>
+    華夫餅 成本 <input type="number" id="cost_華夫餅" value="10">
+    售價 <input type="number" id="price_華夫餅" value="20">
+  </div>
 </div>
 
 <script>
@@ -154,12 +231,10 @@ const selected = select.querySelector('.selected');
 const optionsContainer = select.querySelector('.options');
 const options = optionsContainer.querySelectorAll('.option');
 
-// 點擊切換選單
 selected.addEventListener('click', () => {
   optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
 });
 
-// 點選商品
 options.forEach(option => {
   option.addEventListener('click', () => {
     selected.textContent = option.textContent;
@@ -167,12 +242,57 @@ options.forEach(option => {
   });
 });
 
-// 點外面收起選單
 document.addEventListener('click', (e) => {
   if (!select.contains(e.target)) {
     optionsContainer.style.display = 'none';
   }
 });
+
+// 記帳功能 + 成本售價計算 + 每日統計
+function updateTotals() {
+  const rows = document.querySelectorAll('#salesTable tbody tr');
+  let totalCost = 0, totalRevenue = 0;
+  const today = document.getElementById('dateInput').value;
+
+  rows.forEach(row => {
+    const date = row.cells[0].textContent;
+    if(date === today) {  // 只計算當日
+      totalCost += parseFloat(row.cells[3].textContent) * parseInt(row.cells[2].textContent);
+      totalRevenue += parseFloat(row.cells[5].textContent);
+    }
+  });
+
+  document.getElementById('totalCost').textContent = totalCost;
+  document.getElementById('totalRevenue').textContent = totalRevenue;
+  document.getElementById('totalProfit').textContent = (totalRevenue - totalCost);
+}
+
+document.getElementById('addBtn').addEventListener('click', () => {
+  const date = document.getElementById('dateInput').value;
+  const product = selected.textContent;
+  const qty = parseInt(document.getElementById('qtyInput').value);
+
+  if(!date || !product || !qty){
+    alert("請填寫完整資訊！");
+    return;
+  }
+
+  const cost = parseFloat(document.getElementById('cost_' + product).value);
+  const price = parseFloat(document.getElementById('price_' + product).value);
+  const revenue = price * qty;
+
+  const tbody = document.getElementById('salesTable').querySelector('tbody');
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${date}</td><td>${product}</td><td>${qty}</td><td>${cost}</td><td>${price}</td><td>${revenue}</td>`;
+  tbody.appendChild(row);
+
+  document.getElementById('qtyInput').value = 1;
+
+  updateTotals(); // 更新每日統計
+});
+
+// 當日期改變也更新統計
+document.getElementById('dateInput').addEventListener('change', updateTotals);
 </script>
 
 </body>
