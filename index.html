@@ -3,90 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>甜點銷售記帳</title>
+<title>甜點記帳 PWA</title>
 <style>
-body { font-family: Arial; max-width:700px; margin:auto; padding:16px; background:#f2f2f7; }
-
-/* 區塊共用 */
-.form-card {
-  background:#fff;
-  border-radius:12px;
-  padding:12px;
-  margin-bottom:12px;
-  box-shadow:0 1px 2px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.06);
-  font-size:1.2em;
-  text-align:center;
-}
-
-/* 輸入框文字置中且不放大 */
-input[type="date"], input[type="number"], input[type="text"], input[type="password"] {
-  width:100%;
-  padding:6px;
-  font-size:1.1em;
-  text-align:center;
-  box-sizing:border-box;
-  -webkit-text-size-adjust:100%;
-}
-
-/* 商品選單 */
-.custom-select {
-  position: relative;
-  font-size:1.2em;
-  width:100%;
-  background:#f2f2f7;
-  border-radius:10px;
-  border:1px solid #d1d1d6;
-  cursor:pointer;
-  box-sizing:border-box;
-  text-align:center;
-}
-.custom-select .selected { padding:10px; text-align:center; }
-.custom-select .options {
-  display:none;
-  position:absolute;
-  top:100%;
-  left:0;
-  width:100%;
-  background:#fff;
-  border-radius:10px;
-  border:1px solid #d1d1d6;
-  max-height:200px;
-  overflow-y:auto;
-  z-index:100;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-.custom-select .option { padding:10px; text-align:center; }
-.custom-select .option:hover { background:#e5e5ea; }
-
-/* 新增銷售按鈕 */
-#addBtn {
-  font-size:1.2em;
-  padding:10px;
-  width:100%;
-  border:none;
-  border-radius:12px;
-  background:#007aff;
-  color:#fff;
-  cursor:pointer;
-}
+body { font-family: Arial; max-width:700px; margin:auto; padding:20px; background:#f2f2f7; }
+div { margin-bottom:15px; }
+input, select, button { font-size:1.2em; box-sizing:border-box; }
+input[type="text"], input[type="number"], input[type="date"], select { width:100%; padding:8px; text-align:center; }
+button { width:100%; padding:10px; border:none; border-radius:8px; background:#007aff; color:#fff; cursor:pointer; }
+button:hover { opacity:0.9; }
 
 /* 銷售表格 */
-table { width:100%; border-collapse:collapse; background:#fff; }
-th, td { border:1px solid #ccc; padding:6px; font-size:1em; text-align:center; }
+table { width:100%; border-collapse:collapse; margin-top:10px; background:#fff; }
+th, td { border:1px solid #ccc; padding:5px; text-align:center; }
 th { background:#f0f0f0; }
 
+/* 後台商品卡 */
+.productCard { background:#fff; padding:10px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,0.1); margin-bottom:10px; }
+
 /* 今日成本區塊 */
-#totals { font-size:1.1em; padding:10px; }
+#totals { background:#fff; padding:10px; border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
 
-/* 後台商品區塊 */
-.backend-product { background:#fff; border-radius:12px; padding:10px; margin-bottom:10px; box-shadow:0 1px 2px rgba(0,0,0,0.08); text-align:center; }
-.backend-product div { margin-bottom:6px; }
-.backend-product input { width:100px; padding:4px; margin-right:6px; font-size:1em; }
-.backend-product button { padding:6px 10px; font-size:1em; border:none; border-radius:6px; background:#ff3b30; color:#fff; cursor:pointer; }
-
-/* 後台密碼輸入區 */
-#backendWrapper { display:none; margin-top:12px; }
-
+.custom-select { position: relative; font-size:1.2em; width:100%; background: #f2f2f7; border-radius: 10px; border: 1px solid #d1d1d6; cursor: pointer; }
+.custom-select .selected { padding:10px; text-align:center; }
+.custom-select .options { display:none; position:absolute; top:100%; left:0; width:100%; background:#fff; border-radius:10px; border:1px solid #d1d1d6; max-height:200px; overflow-y:auto; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+.custom-select .option { padding:10px; text-align:center; }
+.custom-select .option:hover { background:#e5e5ea; }
 </style>
 </head>
 <body>
@@ -94,33 +35,42 @@ th { background:#f0f0f0; }
 <h2>甜點銷售記帳</h2>
 
 <!-- 日期區塊 -->
-<div class="form-card">
+<div class="productCard">
   日期<br>
   <input type="date" id="dateInput">
 </div>
 
 <!-- 商品區塊 -->
-<div class="form-card">
+<div class="productCard">
   商品<br>
   <div class="custom-select" id="customProductSelect">
     <div class="selected">雞蛋糕</div>
-    <div class="options"></div>
+    <div class="options">
+      <div class="option">雞蛋糕</div>
+      <div class="option">奶酪杯</div>
+      <div class="option">提拉米蘇杯</div>
+      <div class="option">雪媚娘</div>
+      <div class="option">紅糖糍粑</div>
+      <div class="option">奶茶凍</div>
+      <div class="option">桂花奶酪</div>
+      <div class="option">華夫餅</div>
+    </div>
   </div>
 </div>
 
 <!-- 份數區塊 -->
-<div class="form-card">
+<div class="productCard">
   份數<br>
   <input type="number" id="qtyInput" min="1" value="1">
 </div>
 
-<!-- 新增銷售按鈕區 -->
-<div class="form-card">
+<!-- 新增銷售區塊 -->
+<div class="productCard">
   <button id="addBtn">新增銷售</button>
 </div>
 
-<!-- 銷售表格區 -->
-<div class="form-card">
+<!-- 銷售表格 -->
+<div class="productCard">
   <table id="salesTable">
     <thead>
       <tr>
@@ -137,174 +87,181 @@ th { background:#f0f0f0; }
   </table>
 </div>
 
-<!-- 今日成本區塊 -->
-<div class="form-card" id="totals">
+<!-- 今日成本統計 -->
+<div id="totals">
   <strong>今日總成本：</strong><span id="totalCost">0</span> 元<br>
   <strong>今日總收入：</strong><span id="totalRevenue">0</span> 元<br>
   <strong>今日總利潤：</strong><span id="totalProfit">0</span> 元
 </div>
 
-<!-- 後台密碼區塊 -->
-<div class="form-card">
+<!-- 後台密碼輸入區塊 -->
+<div class="productCard">
   <input type="password" id="adminPassword" placeholder="輸入後台密碼">
   <button id="unlockBtn">進入後台</button>
 </div>
 
 <!-- 後台商品管理 -->
-<div id="backendWrapper">
-  <h3>後台商品管理</h3>
-  <div id="productBackend"></div>
+<div id="backendWrapper" style="display:none;">
+  <div id="productContainer"></div>
+</div>
 
-  <!-- 新增商品區塊 -->
-  <div class="backend-product">
-    <div>新增商品名稱</div>
-    <input type="text" id="newProductName" placeholder="商品名稱">
-    <div>成本 & 售價</div>
-    成本 <input type="number" id="newCost" value="10">
-    售價 <input type="number" id="newPrice" value="20">
-    <div><button id="addNewProductBtn">新增商品</button></div>
-  </div>
+<!-- 新增商品區塊 -->
+<div class="productCard">
+  商品名稱<br>
+  <input type="text" id="newProductName" placeholder="名稱"><br>
+  <input type="number" id="newCost" placeholder="成本">
+  <input type="number" id="newPrice" placeholder="售價"><br>
+  <button onclick="addProduct()">新增商品</button>
 </div>
 
 <script>
-// 初始商品
-let products = [
-  {name:'雞蛋糕', cost:20, price:50},
-  {name:'奶酪杯', cost:25, price:60},
-  {name:'提拉米蘇杯', cost:30, price:70},
-  {name:'雪媚娘', cost:25, price:55},
-  {name:'紅糖糍粑', cost:15, price:40},
-  {name:'奶茶凍', cost:20, price:50},
-  {name:'桂花奶酪', cost:25, price:60},
-  {name:'華夫餅', cost:30, price:65}
-];
-let salesRecords = [];
-
-// 更新商品選單
-function updateProductSelect(){
-  const optionsContainer = document.querySelector('#customProductSelect .options');
-  optionsContainer.innerHTML='';
-  products.forEach(p=>{
-    const div = document.createElement('div');
-    div.className='option';
-    div.textContent = p.name;
-    div.addEventListener('click', ()=>{
-      document.querySelector('#customProductSelect .selected').textContent = p.name;
-      optionsContainer.style.display='none';
-    });
-    optionsContainer.appendChild(div);
-  });
-}
-updateProductSelect();
-
-// 假選單操作
+// ==== 假選單 JS ====
 const select = document.getElementById('customProductSelect');
 const selected = select.querySelector('.selected');
 const optionsContainer = select.querySelector('.options');
+const options = optionsContainer.querySelectorAll('.option');
 
 selected.addEventListener('click', () => {
-  optionsContainer.style.display = optionsContainer.style.display==='block'?'none':'block';
+  optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
 });
-document.addEventListener('click',(e)=>{
-  if(!select.contains(e.target)) optionsContainer.style.display='none';
+options.forEach(option => {
+  option.addEventListener('click', () => {
+    selected.textContent = option.textContent;
+    optionsContainer.style.display = 'none';
+  });
 });
-
-// 新增銷售
-document.getElementById('addBtn').addEventListener('click', ()=>{
-  const date = document.getElementById('dateInput').value;
-  const name = selected.textContent;
-  const qty = parseInt(document.getElementById('qtyInput').value);
-  const product = products.find(p=>p.name===name);
-  if(!date || !product || qty<1) return alert('請輸入完整資訊');
-  salesRecords.push({date,name,qty,cost:product.cost,price:product.price});
-  renderSales();
+document.addEventListener('click', (e) => {
+  if (!select.contains(e.target)) optionsContainer.style.display='none';
 });
 
-// 渲染銷售表格
-function renderSales(){
-  const tbody = document.querySelector('#salesTable tbody');
-  tbody.innerHTML='';
+// ==== 初始商品資料 ====
+let products = [
+  {name:'雞蛋糕', price:50, cost:20},
+  {name:'奶酪杯', price:60, cost:25},
+  {name:'提拉米蘇杯', price:70, cost:30},
+  {name:'雪媚娘', price:55, cost:25},
+  {name:'紅糖糍粑', price:40, cost:15},
+  {name:'奶茶凍', price:50, cost:20},
+  {name:'桂花奶酪', price:60, cost:25},
+  {name:'華夫餅', price:65, cost:30}
+];
+
+let salesRecords = [];
+
+// ==== 銷售表格 ====
+function updateTotals(){
+  const rows = document.querySelectorAll('#salesTable tbody tr');
+  let totalCost=0, totalRevenue=0;
   const today = document.getElementById('dateInput').value;
-  let totalCost=0,totalRevenue=0;
-  salesRecords.forEach((r,idx)=>{
-    const dateStr = new Date(r.date).toLocaleDateString('zh-TW',{month:'numeric', day:'numeric'});
-    const revenue = r.price*r.qty;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${dateStr}</td><td>${r.name}</td><td>${r.qty}</td><td>${r.cost}</td><td>${r.price}</td><td>${revenue}</td>
-    <td><button onclick="deleteSale(${idx})">刪除</button></td>`;
-    tbody.appendChild(tr);
-    if(r.date===today){
-      totalCost += r.cost*r.qty;
-      totalRevenue += revenue;
+  rows.forEach(row=>{
+    const date = row.cells[0].textContent;
+    if(date===today){
+      totalCost += parseFloat(row.cells[3].textContent)*parseInt(row.cells[2].textContent);
+      totalRevenue += parseFloat(row.cells[5].textContent);
     }
   });
-  document.getElementById('totalCost').textContent=totalCost;
-  document.getElementById('totalRevenue').textContent=totalRevenue;
-  document.getElementById('totalProfit').textContent=totalRevenue-totalCost;
+  document.getElementById('totalCost').textContent = totalCost;
+  document.getElementById('totalRevenue').textContent = totalRevenue;
+  document.getElementById('totalProfit').textContent = (totalRevenue-totalCost);
 }
 
-// 刪除銷售
-function deleteSale(idx){
-  if(confirm('確定刪除這筆銷售資料嗎？')){
-    salesRecords.splice(idx,1);
-    renderSales();
+document.getElementById('addBtn').addEventListener('click', ()=>{
+  const date = document.getElementById('dateInput').value;
+  const productName = selected.textContent;
+  const qty = parseInt(document.getElementById('qtyInput').value);
+  if(!date||!productName||!qty){ alert('請填完整資料'); return;}
+  const product = products.find(p=>p.name===productName);
+  const revenue = product.price*qty;
+
+  // 日期格式 MM/DD
+  const dateObj = new Date(date);
+  const dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()}`;
+
+  const tbody = document.querySelector('#salesTable tbody');
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${dateStr}</td><td>${product.name}</td><td style="text-align:center">${qty}</td><td>${product.cost}</td><td>${product.price}</td><td>${revenue}</td><td><button onclick="deleteSale(this)">刪除</button></td>`;
+  tbody.appendChild(row);
+
+  document.getElementById('qtyInput').value=1;
+  updateTotals();
+});
+
+function deleteSale(btn){
+  if(confirm('確定刪除這筆銷售紀錄？')){
+    btn.parentElement.parentElement.remove();
+    updateTotals();
   }
 }
 
-// 後台密碼
-const correctPassword='1234';
-document.getElementById('unlockBtn').addEventListener('click',()=>{
+// ==== 後台 ====
+const correctPassword = "1234";
+document.getElementById('unlockBtn').addEventListener('click', ()=>{
   const pwd = document.getElementById('adminPassword').value;
   if(pwd===correctPassword){
     document.getElementById('backendWrapper').style.display='block';
-    alert('後台已開啟！');
-    document.getElementById('adminPassword').value='';
+    alert('後台已開啟');
     renderBackend();
   }else alert('密碼錯誤');
 });
 
-// 後台商品管理
 function renderBackend(){
-  const container = document.getElementById('productBackend');
-  container.innerHTML='';
-  products.forEach((p,idx)=>{
+  const container = document.getElementById('productContainer');
+  container.innerHTML = '';
+  products.forEach((p,i)=>{
     const div = document.createElement('div');
-    div.className='backend-product';
-    div.innerHTML = `<div>${p.name}</div>
-    <div>成本 <input type="number" value="${p.cost}" onchange="updateProduct(${idx},'cost',this.value)"> 
-    售價 <input type="number" value="${p.price}" onchange="updateProduct(${idx},'price',this.value)"></div>
-    <div><button onclick="deleteProduct(${idx})">刪除商品</button></div>`;
+    div.className='productCard';
+    div.innerHTML = `
+      ${p.name}<br>
+      <input type="number" value="${p.cost}" onchange="updateProduct(${i},'cost',this.value)" placeholder="成本">
+      <input type="number" value="${p.price}" onchange="updateProduct(${i},'price',this.value)" placeholder="售價"><br>
+      <button onclick="deleteProduct(${i})">刪除商品</button>
+    `;
     container.appendChild(div);
   });
 }
 
-// 更新商品資料
-function updateProduct(idx,field,value){
-  products[idx][field]=parseFloat(value);
-  renderBackend();
-  updateProductSelect();
+function updateProduct(idx, field, value){
+  products[idx][field] = parseFloat(value);
 }
 
-// 刪除商品
 function deleteProduct(idx){
-  if(confirm('確定刪除這個商品嗎？')){
+  if(confirm('確定刪除這個商品？')){
     products.splice(idx,1);
     renderBackend();
     updateProductSelect();
   }
 }
 
-// 新增商品
-document.getElementById('addNewProductBtn').addEventListener('click',()=>{
-  const name=document.getElementById('newProductName').value.trim();
-  const cost=parseFloat(document.getElementById('newCost').value);
-  const price=parseFloat(document.getElementById('newPrice').value);
-  if(!name||isNaN(cost)||isNaN(price)) return alert('請輸入完整資訊');
-  products.push({name,cost,price});
+// ==== 新增商品 ====
+function addProduct(){
+  const name = document.getElementById('newProductName').value;
+  const cost = parseFloat(document.getElementById('newCost').value);
+  const price = parseFloat(document.getElementById('newPrice').value);
+  if(!name||isNaN(cost)||isNaN(price)){ alert('請輸入完整資料'); return;}
+  products.push({name, cost, price});
   renderBackend();
   updateProductSelect();
   document.getElementById('newProductName').value='';
-});
+  document.getElementById('newCost').value='';
+  document.getElementById('newPrice').value='';
+}
+
+// ==== 更新前台商品選單 ====
+function updateProductSelect(){
+  const optionContainer = optionsContainer;
+  optionContainer.innerHTML='';
+  products.forEach(p=>{
+    const opt = document.createElement('div');
+    opt.className='option';
+    opt.textContent=p.name;
+    opt.addEventListener('click',()=>{
+      selected.textContent=p.name;
+      optionContainer.style.display='none';
+    });
+    optionContainer.appendChild(opt);
+  });
+}
+
 </script>
 </body>
 </html>
