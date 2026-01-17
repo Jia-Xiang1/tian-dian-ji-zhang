@@ -65,11 +65,7 @@ input, select, button {
   background: #fff;
 }
 
-/* 代號輸入專用卡片 */
-.code-card {
-  width: 80%;
-  margin: 0 auto 14px auto;
-}
+/* 卡片內輸入框置中 */
 .code-card input {
   width: 90%;
   max-width: 280px;
@@ -122,87 +118,91 @@ th {
 
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
-<!-- 輸入代號 -->
-<div class="card code-card">
+<!-- 第一層：代號輸入 -->
+<div id="loginLayer" class="card code-card">
   代號
   <input type="text" id="userCode" placeholder="請輸入代號">
+  <button onclick="login()">進入系統</button>
 </div>
 
-<!-- 日期 -->
-<div class="card">
-  日期
-  <input type="date" id="dateInput">
-</div>
+<!-- 第二層：系統主畫面 -->
+<div id="mainLayer" style="display:none;">
 
-<!-- 商品 -->
-<div class="card">
-  商品
-  <select id="productSelect"></select>
-</div>
+  <!-- 日期 -->
+  <div class="card">
+    日期
+    <input type="date" id="dateInput">
+  </div>
 
-<!-- 份數 -->
-<div class="card">
-  份數
-  <input type="number" id="qtyInput" min="1" value="1">
-</div>
+  <!-- 商品 -->
+  <div class="card">
+    商品
+    <select id="productSelect"></select>
+  </div>
 
-<!-- 新增 -->
-<div class="card">
-  <button onclick="addSale()">新增銷售</button>
-</div>
+  <!-- 份數 -->
+  <div class="card">
+    份數
+    <input type="number" id="qtyInput" min="1" value="1">
+  </div>
 
-<!-- 銷售表格 -->
-<div class="card">
-<table>
-<thead>
-<tr>
-<th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>代號</th><th>刪除</th>
-</tr>
-</thead>
-<tbody id="salesList"></tbody>
-</table>
-</div>
+  <!-- 新增 -->
+  <div class="card">
+    <button onclick="addSale()">新增銷售</button>
+  </div>
 
-<!-- 今日統計 -->
-<div class="card">
-  今日成本：<span id="totalCost">0</span><br>
-  今日收入：<span id="totalRevenue">0</span><br>
-  今日利潤：<span id="totalProfit">0</span>
-</div>
+  <!-- 銷售表格 -->
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>代號</th><th>刪除</th>
+        </tr>
+      </thead>
+      <tbody id="salesList"></tbody>
+    </table>
+  </div>
 
-<!-- 後台密碼 -->
-<div class="card code-card">
-  <input type="password" id="adminPwd" placeholder="後台密碼">
-  <button onclick="unlockBackend()">進入後台</button>
-</div>
+  <!-- 今日統計 -->
+  <div class="card">
+    今日成本：<span id="totalCost">0</span><br>
+    今日收入：<span id="totalRevenue">0</span><br>
+    今日利潤：<span id="totalProfit">0</span>
+  </div>
 
-<!-- 後台 -->
-<div id="backend" style="display:none" class="card">
-<h3>商品管理</h3>
-<div id="productList"></div>
+  <!-- 後台 -->
+  <div class="card">
+    <input type="password" id="adminPwd" placeholder="後台密碼">
+    <button onclick="unlockBackend()">進入後台</button>
+  </div>
 
-<!-- 新增商品區 -->
-<div class="product-card">
-  <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
-  <div class="product-row">
-    <div style="flex:1; text-align:center;">商品名稱
-      <input id="newName" placeholder="名稱">
-    </div>
-    <div style="flex:1; text-align:center;">成本
-      <input id="newCost" type="number" placeholder="成本">
-    </div>
-    <div style="flex:1; text-align:center;">售價
-      <input id="newPrice" type="number" placeholder="售價">
+  <div id="backend" style="display:none" class="card">
+    <h3>商品管理</h3>
+    <div id="productList"></div>
+
+    <!-- 新增商品區 -->
+    <div class="product-card">
+      <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
+      <div class="product-row">
+        <div style="flex:1; text-align:center;">商品名稱
+          <input id="newName" placeholder="名稱">
+        </div>
+        <div style="flex:1; text-align:center;">成本
+          <input id="newCost" type="number" placeholder="成本">
+        </div>
+        <div style="flex:1; text-align:center;">售價
+          <input id="newPrice" type="number" placeholder="售價">
+        </div>
+      </div>
+      <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
     </div>
   </div>
-  <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
-</div>
 
 </div>
 
 <script>
 // 範例產品
-let products=JSON.parse(localStorage.getItem("products"))||[
+let products = JSON.parse(localStorage.getItem("products"))||[
 {name:"雞蛋糕",cost:20,price:50},
 {name:"奶酪杯",cost:25,price:60},
 {name:"提拉米蘇杯",cost:30,price:70},
@@ -213,13 +213,25 @@ let products=JSON.parse(localStorage.getItem("products"))||[
 {name:"華夫餅",cost:30,price:65}
 ];
 
-let sales=JSON.parse(localStorage.getItem("sales"))||[];
+let sales = JSON.parse(localStorage.getItem("sales"))||[];
+let userCodeGlobal = "";
 
+// 儲存
 function save(){
   localStorage.setItem("products",JSON.stringify(products));
   localStorage.setItem("sales",JSON.stringify(sales));
 }
 
+// 登入驗證
+function login(){
+  const code = document.getElementById("userCode").value.trim();
+  if(!code){ alert("請輸入代號"); return; }
+  userCodeGlobal = code;
+  document.getElementById("loginLayer").style.display="none";
+  document.getElementById("mainLayer").style.display="block";
+}
+
+// 更新商品選擇
 function updateSelect(){
   const s=document.getElementById("productSelect");
   s.innerHTML="";
@@ -231,19 +243,19 @@ function updateSelect(){
   });
 }
 
+// 新增銷售
 function addSale(){
-  const code=document.getElementById("userCode").value.trim();
   const d=document.getElementById("dateInput").value;
   const i=document.getElementById("productSelect").value;
   const q=parseInt(document.getElementById("qtyInput").value);
-  if(!code){alert("請輸入代號"); return;}
   if(!d||q<=0) return;
-  sales.push({code, d,i,q});
+  sales.push({code:userCodeGlobal, d,i,q});
   save();
   renderSales();
-  // 這裡可以呼叫 Google Apps Script API，傳送 code/d/i/q
+  // 這裡可以呼叫 Google Apps Script API，即時回傳 code/d/i/q
 }
 
+// 渲染銷售列表
 function renderSales(){
   const list=document.getElementById("salesList");
   list.innerHTML="";
@@ -275,6 +287,7 @@ function delSale(i){
   }
 }
 
+// 後台管理
 const adminPassword="1234";
 function unlockBackend(){
   if(document.getElementById("adminPwd").value===adminPassword){
@@ -321,6 +334,7 @@ function addProduct(){
   newName.value=newCost.value=newPrice.value="";
 }
 
+// 初始化
 updateSelect(); renderSales(); renderBackend();
 </script>
 
