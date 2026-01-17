@@ -14,7 +14,7 @@ body {
   background: #f2f2f7;
 }
 
-/* 每個輸入區塊 */
+/* 輸入區塊 */
 .form-card {
   background: #fff;
   border-radius: 12px;
@@ -25,7 +25,7 @@ body {
   text-align: center;
 }
 
-/* 前台輸入欄位及按鈕 */
+/* 輸入欄位與按鈕 */
 .form-card input, .form-card select, .form-card button {
   width: 80%;
   display: block;
@@ -39,7 +39,7 @@ body {
   border: 1px solid #ccc;
 }
 
-/* 新增按鈕特殊顏色 */
+/* 新增按鈕顏色 */
 #addBtn {
   background: #007aff;
   color: #fff;
@@ -68,18 +68,26 @@ th {
   background:#fff;
   border-radius:12px;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
-  margin-top:12px;
+  margin-top:20px; /* 與表格區隔 */
 }
 
-/* 後台密碼 */
+/* 後台密碼區塊 */
+#backendPwdCard {
+  margin-top:20px;
+}
+
+/* 後台管理區塊 */
 #backendWrapper {
   display:none;
-  margin-top:20px;
+  margin-top:20px; /* 與前面區塊隔開 */
   padding:12px;
   background:#fff;
   border-radius:12px;
   box-shadow:0 2px 6px rgba(0,0,0,0.1);
   font-size:1em;
+}
+#backendWrapper .form-card {
+  margin-bottom:10px;
 }
 </style>
 </head>
@@ -143,7 +151,7 @@ th {
 </div>
 
 <!-- 後台密碼 -->
-<div class="form-card">
+<div class="form-card" id="backendPwdCard">
   <input type="password" id="adminPassword" placeholder="輸入後台密碼">
   <button id="unlockBtn">進入後台</button>
 </div>
@@ -258,5 +266,6 @@ function deleteProduct(idx){
   }
 }
 </script>
+
 </body>
 </html>
