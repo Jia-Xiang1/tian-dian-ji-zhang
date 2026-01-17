@@ -4,133 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>甜點銷售記帳</title>
-
 <style>
-body {
-  font-family: -apple-system, BlinkMacSystemFont, Arial;
-  background:#f2f2f7;
-  max-width:700px;
-  margin:auto;
-  padding:16px;
-}
-
-/* 通用卡片 */
-.card {
-  background:#fff;
-  border-radius:14px;
-  padding:12px;
-  margin-bottom:14px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.08);
-  text-align:center;
-}
-
-/* 輸入 */
-input, select, button {
-  font-size:16px;
-  height:44px;
-  width:100%;
-  box-sizing:border-box;
-  border:none;
-  border-radius:12px;
-  background:#f2f2f7;
-  text-align:center;
-}
-
-/* 日期 */
-#dateInput {
-  background:#fff;
-  border:none;
-  width:60%;
-  max-width:300px;
-  margin:0 auto;
-  display:block;
-  text-align:center;
-  height:32px;
-  line-height:32px;
-  border-radius:8px;
-}
-
-/* 商品選擇 */
-#productSelect {
-  width:60%;
-  max-width:300px;
-  margin:0 auto;
-  display:block;
-  text-align-last:center;
-  -moz-text-align-last:center;
-  -webkit-appearance:none;
-  appearance:none;
-  height:32px;
-  border-radius:8px;
-  background:#fff;
-}
-
-/* 表格 */
-table {
-  width:100%;
-  border-collapse:collapse;
-}
-th, td {
-  border:1px solid #ccc;
-  padding:6px;
-  text-align:center;
-}
-th {
-  background:#f0f0f0;
-}
-
-/* 後台列 */
-.admin-row {
-  display:flex;
-  gap:10px;
-}
-.admin-row input,
-.admin-row button {
-  flex:1;
-}
-
-/* 商品卡片 */
-.product-card {
-  border:1px solid #ddd;
-  border-radius:12px;
-  padding:10px;
-  margin-bottom:10px;
-}
-
-/* 商品成本/售價 */
-.product-row {
-  display:flex;
-  justify-content:space-between;
-  gap:4%;
-}
-.product-row div input {
-  width:100%;
-  margin-top:4px;
-}
-
-/* 底部按鈕 */
-.bottom-tab {
-  position:fixed;
-  bottom:0;
-  left:0;
-  width:100%;
-  display:flex;
-  border-top:1px solid #ddd;
-  background:#fff;
-}
-.bottom-tab button {
-  flex:1;
-  height:50px;
-  border-radius:0;
-}
+body { font-family:-apple-system,BlinkMacSystemFont,Arial; background:#f2f2f7; max-width:700px; margin:auto; padding:16px; }
+.card { background:#fff; border-radius:14px; padding:12px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center; }
+input, select, button { font-size:16px; height:44px; width:100%; box-sizing:border-box; border:none; border-radius:12px; background:#f2f2f7; text-align:center; }
+#dateInput, #productSelect { background:#fff; border:none; width:60%; max-width:300px; margin:0 auto; display:block; text-align:center; height:32px; border-radius:8px; }
+table { width:100%; border-collapse:collapse; }
+th, td { border:1px solid #ccc; padding:6px; text-align:center; }
+th { background:#f0f0f0; }
+.product-card { border:1px solid #ddd; border-radius:12px; padding:10px; margin-bottom:10px; }
+.product-row { display:flex; justify-content:space-between; gap:4%; }
+.product-row div input { width:100%; margin-top:4px; }
+.bottom-tab { position:fixed; bottom:0; left:0; width:100%; display:flex; border-top:1px solid #ddd; background:#fff; }
+.bottom-tab button { flex:1; height:50px; border-radius:0; }
 </style>
 </head>
-
 <body>
 
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
-<!-- 使用者頁 -->
+<!-- 使用者輸入 -->
 <div id="userPage" class="card">
   使用者名稱
   <input type="text" id="userNameInput" placeholder="請輸入姓名">
@@ -142,76 +35,44 @@ th {
 
   <!-- 銷售頁 -->
   <div id="page-sale">
-
-    <div class="card">
-      日期
-      <input type="date" id="dateInput">
-    </div>
-
-    <div class="card">
-      商品
-      <select id="productSelect"></select>
-    </div>
-
-    <div class="card">
-      份數
-      <input type="number" id="qtyInput" min="1" value="1">
-    </div>
-
-    <div class="card">
-      <button onclick="addSale()">新增銷售</button>
-    </div>
-
+    <div class="card">日期<input type="date" id="dateInput"></div>
+    <div class="card">商品<select id="productSelect"></select></div>
+    <div class="card">份數<input type="number" id="qtyInput" min="1" value="1"></div>
+    <div class="card"><button onclick="addSale()">新增銷售</button></div>
     <div class="card">
       <table>
         <thead>
-          <tr>
-            <th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>人員</th><th>刪除</th>
-          </tr>
+          <tr><th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>人員</th><th>刪除</th></tr>
         </thead>
         <tbody id="salesList"></tbody>
       </table>
     </div>
-
     <div class="card">
       今日成本：<span id="totalCost">0</span><br>
       今日收入：<span id="totalRevenue">0</span><br>
       今日利潤：<span id="totalProfit">0</span>
     </div>
-
   </div>
 
   <!-- 後台頁 -->
   <div id="page-admin" style="display:none">
-
     <div class="card">
-      <div class="admin-row">
-        <input type="password" id="adminPwd" placeholder="後台密碼">
-        <button onclick="unlockBackend()">進入後台</button>
-      </div>
+      <input type="password" id="adminPwd" placeholder="後台密碼">
+      <button onclick="unlockBackend()">進入後台</button>
     </div>
-
     <div id="backend" style="display:none" class="card">
       <h3>商品管理</h3>
       <div id="productList"></div>
-
       <div class="product-card">
         <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
         <div class="product-row">
-          <div style="flex:1; text-align:center;">商品名稱
-            <input id="newName" placeholder="名稱">
-          </div>
-          <div style="flex:1; text-align:center;">成本
-            <input id="newCost" type="number" placeholder="成本">
-          </div>
-          <div style="flex:1; text-align:center;">售價
-            <input id="newPrice" type="number" placeholder="售價">
-          </div>
+          <div style="flex:1; text-align:center;">名稱<input id="newName" placeholder="名稱"></div>
+          <div style="flex:1; text-align:center;">成本<input id="newCost" type="number" placeholder="成本"></div>
+          <div style="flex:1; text-align:center;">售價<input id="newPrice" type="number" placeholder="售價"></div>
         </div>
         <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
       </div>
     </div>
-
   </div>
 
   <!-- 底部 Tab -->
@@ -222,48 +83,50 @@ th {
 
 </div>
 
-<script>
+<script type="module">
+import { addSaleCloud, loadSalesCloud, loadProductsCloud, addProductCloud, updateProductCloud, delProductCloud, delSaleCloud } from './upload.js';
+
 const adminPassword="1234";
-
 let products=JSON.parse(localStorage.getItem("products"))||[
-  {name:"雞蛋糕",cost:20,price:50},
-  {name:"奶酪杯",cost:25,price:60},
-  {name:"提拉米蘇杯",cost:30,price:70},
-  {name:"雪媚娘",cost:25,price:55},
-  {name:"紅糖糍粑",cost:15,price:40},
-  {name:"奶茶凍",cost:20,price:50},
-  {name:"桂花奶酪",cost:25,price:60},
-  {name:"華夫餅",cost:30,price:65}
+  {name:"雞蛋糕",cost:20,price:50},{name:"奶酪杯",cost:25,price:60},{name:"提拉米蘇杯",cost:30,price:70},
+  {name:"雪媚娘",cost:25,price:55},{name:"紅糖糍粑",cost:15,price:40},{name:"奶茶凍",cost:20,price:50},
+  {name:"桂花奶酪",cost:25,price:60},{name:"華夫餅",cost:30,price:65}
 ];
-
 let sales=JSON.parse(localStorage.getItem("sales"))||[];
 
 // 進入 App
-function enterApp(){
+async function enterApp(){
   const user = document.getElementById("userNameInput").value.trim();
   if(!user){ alert("請輸入姓名！"); return; }
   localStorage.setItem("currentUser", user);
   document.getElementById("userPage").style.display="none";
   document.getElementById("mainApp").style.display="block";
+
+  // 雲端同步資料
+  const productsCloud = await loadProductsCloud();
+  const salesCloud = await loadSalesCloud();
+  products = productsCloud.length ? productsCloud : products;
+  sales = salesCloud.length ? salesCloud : sales;
+  save();
   updateSelect();
   renderSales();
   renderBackend();
-  showPage('sale'); // 進前台
+  showPage('sale');
 }
 
 // 新增銷售
-function addSale(){
+async function addSale(){
   const user = localStorage.getItem("currentUser");
-  if(!user){ alert("請先輸入使用者名稱！"); return; }
-
   const d=document.getElementById("dateInput").value;
-  const i=document.getElementById("productSelect").value;
+  const i=parseInt(document.getElementById("productSelect").value);
   const q=parseInt(document.getElementById("qtyInput").value);
-  if(!d || q<=0) return;
-
+  if(!user||!d||q<=0) return;
+  const p = products[i];
+  const revenue = p.price * q;
   sales.push({d,i,q,user});
   save();
   renderSales();
+  await addSaleCloud({date:d,product:p.name,qty:q,user,revenue});
 }
 
 // localStorage 保存
@@ -276,33 +139,20 @@ function save(){
 function updateSelect(){
   const s=document.getElementById("productSelect");
   s.innerHTML="";
-  products.forEach((p,i)=>{
-    const o=document.createElement("option");
-    o.value=i;
-    o.textContent=p.name;
-    s.appendChild(o);
-  });
+  products.forEach((p,i)=>{ const o=document.createElement("option"); o.value=i; o.textContent=p.name; s.appendChild(o); });
 }
 
-// 顯示銷售表
+// 渲染銷售表
 function renderSales(){
   const list=document.getElementById("salesList");
   list.innerHTML="";
-  let cost=0, rev=0;
+  let cost=0,rev=0;
   sales.forEach((s,idx)=>{
     const p=products[s.i];
     const r=p.price*s.q;
-    cost+=p.cost*s.q;
-    rev+=r;
+    cost+=p.cost*s.q; rev+=r;
     const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${s.d.slice(5)}</td>
-      <td>${p.name}</td>
-      <td>${s.q}</td>
-      <td>${r}</td>
-      <td>${s.user}</td>
-      <td><button onclick="delSale(${idx})">刪除</button></td>
-    `;
+    tr.innerHTML=`<td>${s.d.slice(5)}</td><td>${p.name}</td><td>${s.q}</td><td>${r}</td><td>${s.user}</td><td><button onclick="delSale(${idx})">刪除</button></td>`;
     list.appendChild(tr);
   });
   document.getElementById("totalCost").textContent=cost;
@@ -310,11 +160,14 @@ function renderSales(){
   document.getElementById("totalProfit").textContent=rev-cost;
 }
 
-function delSale(i){
+// 刪除銷售
+window.delSale = async function(i){
   if(confirm("確定刪除？")){
+    const s = sales[i];
     sales.splice(i,1);
     save();
     renderSales();
+    await delSaleCloud(s.d, products[s.i].name, s.user);
   }
 }
 
@@ -322,48 +175,52 @@ function delSale(i){
 function unlockBackend(){
   const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
-
   if(document.getElementById("adminPwd").value===adminPassword){
     document.getElementById("backend").style.display="block";
   } else alert("密碼錯誤");
 }
 
+// 渲染後台
 function renderBackend(){
   const box=document.getElementById("productList");
   box.innerHTML="";
   products.forEach((p,i)=>{
     const d=document.createElement("div");
     d.className="product-card";
-    d.innerHTML=`
-      <div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
+    d.innerHTML=`<div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
       <div class="product-row">
         <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
         <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
       </div>
-      <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>
-    `;
+      <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
     box.appendChild(d);
   });
 }
 
-function updateP(i,f,v){
+// 更新商品
+window.updateP = async function(i,f,v){
   products[i][f]=parseFloat(v);
   save();
   updateSelect();
   renderSales();
+  await updateProductCloud(products[i].name,f,parseFloat(v));
 }
 
-function delProduct(i){
+// 刪除商品
+window.delProduct = async function(i){
   if(confirm("確定刪除？")){
+    const name = products[i].name;
     products.splice(i,1);
     save();
     updateSelect();
     renderBackend();
     renderSales();
+    await delProductCloud(name);
   }
 }
 
-function addProduct(){
+// 新增商品
+window.addProduct = async function(){
   const n=newName.value;
   const c=parseFloat(newCost.value);
   const p=parseFloat(newPrice.value);
@@ -372,14 +229,14 @@ function addProduct(){
   save();
   updateSelect();
   renderBackend();
+  await addProductCloud({name:n,cost:c,price:p});
   newName.value=newCost.value=newPrice.value="";
 }
 
-// 顯示頁面
+// 分頁
 function showPage(p){
   const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
-
   document.getElementById("page-sale").style.display = p==='sale' ? "block":"none";
   document.getElementById("page-admin").style.display = p==='admin' ? "block":"none";
 }
