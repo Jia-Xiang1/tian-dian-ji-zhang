@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>甜點記帳 (密碼後台)</title>
+<title>甜點記帳 (四行固定大小)</title>
 
 <style>
 body { 
@@ -14,36 +14,19 @@ body {
   background:#f2f2f7;
 }
 
-/* 表格 */
-table { 
-  width:100%; 
-  border-collapse:collapse; 
-  margin-top:10px; 
-}
-
-th, td { 
-  border:1px solid #ccc; 
-  padding:5px; 
-  text-align:center; 
-}
-
-th { 
-  background:#f0f0f0; 
-}
-
-/* 卡片容器，標籤文字 */
+/* 卡片容器，每行一個欄位 */
 .form-card {
   background:#fff;
-  border-radius:14px;
-  padding:10px 12px 14px;
+  border-radius:12px;
+  padding:12px;
   margin-bottom:12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
-  font-size:1.125em; /* 18px */
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.06);
+  font-size:18px; /* 固定字體大小 */
 }
 
 /* 日期 / 份數欄位 */
 #dateInput, #qtyInput {
-  font-size:1.06em; /* 17px */
+  font-size:16px; /* 固定字體大小 */
   padding:6px;
   width:100%;
   box-sizing:border-box;
@@ -53,7 +36,7 @@ th {
 /* 假選單（商品） */
 .custom-select {
   position: relative;
-  font-size:1.06em; /* 17px */
+  font-size:16px;
   width: 100%;
   background: #f2f2f7;
   border-radius: 10px;
@@ -93,7 +76,7 @@ th {
 
 /* 新增按鈕 */
 #addBtn {
-  font-size:1.125em; /* 18px */
+  font-size:16px;
   padding:10px;
   width:100%;
   box-sizing:border-box;
@@ -103,17 +86,26 @@ th {
   color:#fff;
 }
 
-/* 後台欄位 */
-#backend input {
-  font-size:1em;
-  padding:4px;
-  width:60px;
-  margin-right:8px;
+/* 表格 */
+table { 
+  width:100%; 
+  border-collapse:collapse; 
+  margin-top:10px; 
+}
+
+th, td { 
+  border:1px solid #ccc; 
+  padding:5px; 
+  text-align:center; 
+}
+
+th { 
+  background:#f0f0f0; 
 }
 
 /* 統計區塊 */
 #totals {
-  font-size:1.125em; /* 18px */
+  font-size:18px; 
   padding:10px;
   background:#fff;
   border-radius:12px;
@@ -126,12 +118,11 @@ th {
 }
 </style>
 </head>
-
 <body>
 
 <h2>甜點銷售記帳</h2>
 
-<!-- 輸入區 -->
+<!-- 四行輸入 -->
 <div class="form-card">
   日期<br>
   <input type="date" id="dateInput">
@@ -175,8 +166,7 @@ th {
       <th>收入</th>
     </tr>
   </thead>
-  <tbody>
-  </tbody>
+  <tbody></tbody>
 </table>
 
 <!-- 今日統計 -->
@@ -192,7 +182,7 @@ th {
   <button id="unlockBtn">進入後台</button>
 </div>
 
-<!-- 後台成本/售價 -->
+<!-- 後台設定成本/售價 -->
 <div id="backendWrapper" class="form-card">
   <h3>後台設定成本與售價（單位：元）</h3>
   <div>雞蛋糕 成本 <input type="number" id="cost_雞蛋糕" value="10"> 售價 <input type="number" id="price_雞蛋糕" value="20"></div>
@@ -229,7 +219,7 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// 記帳功能 + 成本售價 + 統計
+// 記帳功能
 function updateTotals() {
   const rows = document.querySelectorAll('#salesTable tbody tr');
   let totalCost = 0, totalRevenue = 0;
@@ -275,7 +265,7 @@ document.getElementById('addBtn').addEventListener('click', () => {
 document.getElementById('dateInput').addEventListener('change', updateTotals);
 
 // 後台密碼
-const correctPassword = "1234"; // 可以修改
+const correctPassword = "1234";
 document.getElementById('unlockBtn').addEventListener('click', () => {
   const pwd = document.getElementById('adminPassword').value;
   if(pwd === correctPassword){
