@@ -52,10 +52,17 @@ input, select, button {
 
 /* 商品選擇欄文字置中 */
 #productSelect {
-  text-align: center;
-}
-#productSelect option {
-  text-align: center;
+  width: 60%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
+  text-align-last: center;      /* 置中選中的文字 */
+  -moz-text-align-last: center; /* Firefox */
+  -webkit-appearance: none;     /* 移除原生樣式 */
+  appearance: none;
+  height: 32px;
+  border-radius: 8px;
+  background: #fff;
 }
 
 /* 按鈕 */
@@ -76,9 +83,6 @@ th, td {
 }
 th {
   background:#f0f0f0;
-}
-td:first-child, td:nth-child(2) {
-  text-align:center;
 }
 
 /* 後台密碼列 */
