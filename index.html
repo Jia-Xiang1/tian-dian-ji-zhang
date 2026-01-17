@@ -36,10 +36,15 @@ input, select, button {
   text-align:center;
 }
 
-/* 日期無框線 */
+/* 日期無框線，縮小並置中 */
 #dateInput {
-  background:#f2f2f7;
-  border:none;
+  background: #f2f2f7;
+  border: none;
+  width: 60%;       /* 設定框寬為卡片內的60% */
+  max-width: 300px; /* 最大寬度 */
+  margin: 0 auto;   /* 水平置中 */
+  display: block;   /* 讓 margin:auto 生效 */
+  text-align: center; /* 文字置中 */
 }
 
 /* 按鈕 */
@@ -273,7 +278,7 @@ const c=parseFloat(newCost.value);
 const p=parseFloat(newPrice.value);
 if(!n||!c||!p)return;
 products.push({name:n,cost:c,price:p});
-save();updateSelect();renderBackend();
+save();updateSelect().renderBackend();
 newName.value=newCost.value=newPrice.value="";
 }
 
