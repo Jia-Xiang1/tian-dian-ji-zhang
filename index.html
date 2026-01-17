@@ -3,128 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>甜點記帳</title>
-<link rel="manifest" href="manifest.json">
+<title>甜點記帳 (密碼後台)</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  max-width: 700px;
-  margin: auto;
-  padding: 20px;
-  background: #f2f2f7;
-}
-
-/* 輸入區塊 */
-.form-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  font-size: 1.4em;
-  text-align: center;
-}
-
-/* 輸入欄位與按鈕 */
-.form-card input, .form-card select, .form-card button {
-  width: 80%;
-  display: block;
-  margin: 8px auto;
-  font-size: 16px;
-  -webkit-text-size-adjust:100%; /* iPhone 不自動放大 */
-  padding: 8px;
-  box-sizing: border-box;
-  text-align: center;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-}
-
-/* 新增按鈕顏色 */
-#addBtn {
-  background: #007aff;
-  color: #fff;
-  border: none;
-}
-
-/* 銷售表格 */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-th, td {
-  border:1px solid #ccc;
-  padding:5px;
-  text-align:center;
-}
-th {
-  background:#f0f0f0;
-}
-
-/* 今日統計區塊 */
-#totals {
-  font-size:1.2em;
-  padding:10px;
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-  margin-top:20px; /* 與表格區隔 */
-}
-
-/* 後台密碼區塊 */
-#backendPwdCard {
-  margin-top:20px;
-}
-
-/* 後台管理區塊 */
-#backendWrapper {
-  display:none;
-  margin-top:20px; /* 與前面區塊隔開 */
-  padding:12px;
-  background:#fff;
-  border-radius:12px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-  font-size:1em;
-}
-#backendWrapper .form-card {
-  margin-bottom:10px;
-}
+body { font-family: Arial; max-width:700px; margin:auto; padding:16px; background:#f2f2f7; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #ccc; padding:5px; text-align:center; }
+th { background:#f0f0f0; }
+.form-card { background:#fff; border-radius:14px; padding:10px 12px 14px; margin-bottom:12px; box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06); font-size:1.4em; }
+input, select, button { font-size:1.2em; padding:8px; margin:4px; width:100%; box-sizing:border-box; border-radius:10px; }
+#addBtn { background:#007aff; color:#fff; border:none; }
+#totals { font-size:1.2em; padding:10px; background:#fff; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+#backendWrapper { display:none; }
 </style>
 </head>
 <body>
 
 <h2>甜點銷售記帳</h2>
 
-<!-- 日期 -->
+<!-- 前台輸入區 -->
 <div class="form-card">
-  日期
+  日期<br>
   <input type="date" id="dateInput">
 </div>
 
-<!-- 商品選擇 -->
 <div class="form-card">
-  商品
-  <select id="productSelect">
-    <option>雞蛋糕</option>
-    <option>奶酪杯</option>
-    <option>提拉米蘇杯</option>
-    <option>雪媚娘</option>
-    <option>紅糖糍粑</option>
-    <option>奶茶凍</option>
-    <option>桂花奶酪</option>
-    <option>華夫餅</option>
-  </select>
+  商品<br>
+  <select id="productSelect"></select>
 </div>
 
-<!-- 份數 -->
 <div class="form-card">
-  份數
+  份數<br>
   <input type="number" id="qtyInput" min="1" value="1">
 </div>
 
-<!-- 新增按鈕 -->
 <div class="form-card">
-  <button id="addBtn">新增</button>
+  <button id="addBtn">新增銷售</button>
 </div>
 
 <!-- 銷售表格 -->
@@ -137,6 +50,7 @@ th {
       <th>成本</th>
       <th>售價</th>
       <th>收入</th>
+      <th>利潤</th>
       <th>操作</th>
     </tr>
   </thead>
@@ -144,27 +58,51 @@ th {
 </table>
 
 <!-- 今日統計 -->
-<div id="totals">
+<div id="totals" class="form-card">
   <strong>今日總成本：</strong><span id="totalCost">0</span> 元<br>
   <strong>今日總收入：</strong><span id="totalRevenue">0</span> 元<br>
   <strong>今日總利潤：</strong><span id="totalProfit">0</span> 元
 </div>
 
 <!-- 後台密碼 -->
-<div class="form-card" id="backendPwdCard">
+<div class="form-card">
   <input type="password" id="adminPassword" placeholder="輸入後台密碼">
   <button id="unlockBtn">進入後台</button>
 </div>
 
-<!-- 後台管理 -->
+<!-- 後台管理區 -->
 <div id="backendWrapper">
-  <h3>後台設定成本與售價</h3>
+  <h3>後台管理（成本 / 售價 / 刪除 / 新增商品）</h3>
+
+  <!-- 現有商品 -->
   <div id="backendProducts"></div>
+
+  <!-- 新增商品 -->
+  <div class="form-card">
+    <h4>新增商品</h4>
+    商品名稱: <input type="text" id="newProductName" placeholder="名稱">
+    成本: <input type="number" id="newProductCost" placeholder="成本">
+    售價: <input type="number" id="newProductPrice" placeholder="售價">
+    <button onclick="addProduct()">新增商品</button>
+  </div>
 </div>
 
 <script>
-// 初始商品資料
-let products = [
+// ===== 後台密碼 =====
+const correctPassword = "1234"; // 可修改
+document.getElementById('unlockBtn').addEventListener('click', () => {
+  const pwd = document.getElementById('adminPassword').value;
+  if(pwd === correctPassword){
+    document.getElementById('backendWrapper').style.display = "block";
+    alert("後台已開啟！");
+    document.getElementById('adminPassword').value = "";
+  } else {
+    alert("密碼錯誤！");
+  }
+});
+
+// ===== 商品資料 =====
+let products = JSON.parse(localStorage.getItem('products')) || [
   {name:'雞蛋糕', price:50, cost:20},
   {name:'奶酪杯', price:60, cost:25},
   {name:'提拉米蘇杯', price:70, cost:30},
@@ -175,69 +113,21 @@ let products = [
   {name:'華夫餅', price:65, cost:30}
 ];
 
-let salesRecords = [];
+let salesRecords = JSON.parse(localStorage.getItem('salesRecords')) || [];
 
-// 新增銷售
-document.getElementById('addBtn').addEventListener('click', ()=>{
-  const date = document.getElementById('dateInput').value;
-  const productName = document.getElementById('productSelect').value;
-  const qty = parseInt(document.getElementById('qtyInput').value);
-  if(!date || !productName || !qty) return alert('請填寫完整資訊！');
-
-  const product = products.find(p=>p.name===productName);
-  salesRecords.push({date, product, qty});
-  renderSales();
-});
-
-// 渲染表格與統計
-function renderSales(){
-  const tbody = document.querySelector('#salesTable tbody');
-  tbody.innerHTML='';
-  let totalCost=0, totalRevenue=0;
-  salesRecords.forEach((s,idx)=>{
-    const revenue = s.product.price * s.qty;
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${s.date}</td>
-      <td>${s.product.name}</td>
-      <td>${s.qty}</td>
-      <td>${s.product.cost}</td>
-      <td>${s.product.price}</td>
-      <td>${revenue}</td>
-      <td><button onclick="deleteSale(${idx})">刪除</button></td>
-    `;
-    tbody.appendChild(row);
-    totalCost += s.product.cost * s.qty;
-    totalRevenue += revenue;
+// ===== 更新前台商品下拉 =====
+function updateProductSelect(){
+  const select = document.getElementById('productSelect');
+  select.innerHTML='';
+  products.forEach(p=>{
+    const opt = document.createElement('option');
+    opt.value = p.name;
+    opt.innerText = p.name;
+    select.appendChild(opt);
   });
-  document.getElementById('totalCost').textContent = totalCost;
-  document.getElementById('totalRevenue').textContent = totalRevenue;
-  document.getElementById('totalProfit').textContent = totalRevenue - totalCost;
 }
 
-// 刪除銷售
-function deleteSale(idx){
-  if(confirm('確定刪除這筆銷售紀錄？')){
-    salesRecords.splice(idx,1);
-    renderSales();
-  }
-}
-
-// 後台密碼
-const correctPassword = "1234";
-document.getElementById('unlockBtn').addEventListener('click', ()=>{
-  const pwd = document.getElementById('adminPassword').value;
-  if(pwd===correctPassword){
-    document.getElementById('backendWrapper').style.display='block';
-    alert('後台已開啟！');
-    document.getElementById('adminPassword').value='';
-    renderBackend();
-  } else {
-    alert('密碼錯誤！');
-  }
-});
-
-// 後台顯示商品成本與售價
+// ===== 後台渲染商品 =====
 function renderBackend(){
   const container = document.getElementById('backendProducts');
   container.innerHTML='';
@@ -251,20 +141,116 @@ function renderBackend(){
     `;
     container.appendChild(div);
   });
+  updateProductSelect();
 }
+renderBackend();
 
+// ===== 更新商品 =====
 function updateProduct(idx, field, value){
-  products[idx][field] = parseFloat(value);
-  renderSales();
+  if(field==='price' || field==='cost') value=parseFloat(value);
+  products[idx][field]=value;
+  localStorage.setItem('products', JSON.stringify(products));
+  renderBackend();
 }
 
+// ===== 刪除商品 =====
 function deleteProduct(idx){
   if(confirm('確定刪除這個商品？')){
     products.splice(idx,1);
+    localStorage.setItem('products', JSON.stringify(products));
     renderBackend();
+  }
+}
+
+// ===== 新增商品 =====
+function addProduct(){
+  const name = document.getElementById('newProductName').value.trim();
+  const cost = parseFloat(document.getElementById('newProductCost').value);
+  const price = parseFloat(document.getElementById('newProductPrice').value);
+
+  if(!name || isNaN(cost) || isNaN(price)){
+    alert("請輸入完整資訊！");
+    return;
+  }
+
+  products.push({name, cost, price});
+  localStorage.setItem('products', JSON.stringify(products));
+  renderBackend();
+
+  document.getElementById('newProductName').value='';
+  document.getElementById('newProductCost').value='';
+  document.getElementById('newProductPrice').value='';
+}
+
+// ===== 新增銷售 =====
+document.getElementById('addBtn').addEventListener('click', () => {
+  const date = document.getElementById('dateInput').value;
+  const productName = document.getElementById('productSelect').value;
+  const qty = parseInt(document.getElementById('qtyInput').value);
+
+  if(!date || !productName || !qty){
+    alert("請填寫完整資訊！");
+    return;
+  }
+
+  const product = products.find(p=>p.name===productName);
+  const revenue = product.price * qty;
+  const profit = revenue - (product.cost * qty);
+
+  salesRecords.push({date, productName, qty, cost:product.cost, price:product.price, revenue, profit});
+  localStorage.setItem('salesRecords', JSON.stringify(salesRecords));
+
+  renderSales();
+  document.getElementById('qtyInput').value = 1;
+});
+
+// ===== 渲染銷售表格 =====
+function renderSales(){
+  const tbody = document.querySelector('#salesTable tbody');
+  tbody.innerHTML='';
+  let totalCost=0, totalRevenue=0, totalProfit=0;
+
+  salesRecords.forEach((r,idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.date}</td>
+      <td>${r.productName}</td>
+      <td>${r.qty}</td>
+      <td>${r.cost}</td>
+      <td>${r.price}</td>
+      <td>${r.revenue}</td>
+      <td>${r.profit}</td>
+      <td><button onclick="deleteSale(${idx})">刪除</button></td>
+    `;
+    tbody.appendChild(tr);
+
+    // 今日統計
+    const today = document.getElementById('dateInput').value;
+    if(r.date === today){
+      totalCost += r.cost*r.qty;
+      totalRevenue += r.revenue;
+      totalProfit += r.profit;
+    }
+  });
+
+  document.getElementById('totalCost').textContent = totalCost;
+  document.getElementById('totalRevenue').textContent = totalRevenue;
+  document.getElementById('totalProfit').textContent = totalProfit;
+}
+renderSales();
+
+// ===== 刪除銷售 =====
+function deleteSale(idx){
+  if(confirm('確定刪除這筆銷售紀錄？')){
+    salesRecords.splice(idx,1);
+    localStorage.setItem('salesRecords', JSON.stringify(salesRecords));
     renderSales();
   }
 }
+
+// 每次選日期更新統計
+document.getElementById('dateInput').addEventListener('change', renderSales);
+
 </script>
 
 </body>
