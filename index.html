@@ -36,15 +36,15 @@ input, select, button {
   text-align:center;
 }
 
-/* 日期無框線，縮小並置中 */
+/* 日期輸入框縮小、置中，底色白、無框線 */
 #dateInput {
-  background: #f2f2f7;
-  border: none;
-  width: 60%;       /* 設定框寬為卡片內的60% */
-  max-width: 300px; /* 最大寬度 */
-  margin: 0 auto;   /* 水平置中 */
-  display: block;   /* 讓 margin:auto 生效 */
-  text-align: center; /* 文字置中 */
+  background: #fff;   
+  border: none;       
+  width: 60%;         
+  max-width: 300px;   
+  margin: 0 auto;     
+  display: block;     
+  text-align: center; 
 }
 
 /* 按鈕 */
@@ -61,10 +61,13 @@ table {
 th, td {
   border:1px solid #ccc;
   padding:6px;
-  text-align:center;
+  text-align:center; 
 }
 th {
   background:#f0f0f0;
+}
+td:first-child, td:nth-child(2) {
+  text-align:center;
 }
 
 /* 後台密碼列 */
@@ -84,13 +87,16 @@ th {
   padding:10px;
   margin-bottom:10px;
 }
-.product-card input {
-  width:48%;
-}
+
+/* 商品成本/售價列 */
 .product-row {
   display:flex;
   justify-content:space-between;
   gap:4%;
+}
+.product-row div input {
+  width:100%;
+  margin-top:4px;
 }
 </style>
 </head>
@@ -154,15 +160,26 @@ th {
 <h3>商品管理</h3>
 <div id="productList"></div>
 
+<!-- 新增商品區 -->
 <div class="product-card">
-  <div>新增商品</div>
-  <input id="newName" placeholder="商品名稱">
+  <!-- 第一行 -->
+  <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
+  <!-- 第二行 -->
   <div class="product-row">
-    <input id="newCost" type="number" placeholder="成本">
-    <input id="newPrice" type="number" placeholder="售價">
+    <div style="flex:1; text-align:center;">商品名稱
+      <input id="newName" placeholder="名稱">
+    </div>
+    <div style="flex:1; text-align:center;">成本
+      <input id="newCost" type="number" placeholder="成本">
+    </div>
+    <div style="flex:1; text-align:center;">售價
+      <input id="newPrice" type="number" placeholder="售價">
+    </div>
   </div>
-  <button onclick="addProduct()">新增商品</button>
+  <!-- 第三行 -->
+  <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
 </div>
+
 </div>
 
 <script>
@@ -250,12 +267,12 @@ products.forEach((p,i)=>{
 const d=document.createElement("div");
 d.className="product-card";
 d.innerHTML=`
-<div>${p.name}</div>
+<div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
 <div class="product-row">
-<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)">
-<input value="${p.price}" onchange="updateP(${i},'price',this.value)">
+  <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
+  <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
 </div>
-<button onclick="delProduct(${i})">刪除商品</button>`;
+<button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
 box.appendChild(d);
 });
 }
@@ -278,7 +295,7 @@ const c=parseFloat(newCost.value);
 const p=parseFloat(newPrice.value);
 if(!n||!c||!p)return;
 products.push({name:n,cost:c,price:p});
-save();updateSelect().renderBackend();
+save();updateSelect();renderBackend();
 newName.value=newCost.value=newPrice.value="";
 }
 
