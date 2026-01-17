@@ -35,7 +35,7 @@ input, select, button {
   text-align:center;
 }
 
-/* 日期輸入框 */
+/* 日期輸入框縮小、置中，底色白、無框線 */
 #dateInput {
   background: #fff;   
   border: none;       
@@ -55,13 +55,25 @@ input, select, button {
   max-width: 300px;
   margin: 0 auto;
   display: block;
-  text-align-last: center;     
-  -moz-text-align-last: center; 
-  -webkit-appearance: none;    
+  text-align-last: center;
+  -moz-text-align-last: center;
+  -webkit-appearance: none;
   appearance: none;
   height: 32px;
   border-radius: 8px;
   background: #fff;
+}
+
+/* 代號輸入欄 */
+#userCodeInput {
+  width: 60%;
+  max-width: 200px;
+  display:inline-block;
+  text-align:center;
+  height:32px;
+  line-height:32px;
+  border-radius:8px;
+  margin-right:10px;
 }
 
 /* 按鈕 */
@@ -113,15 +125,11 @@ th {
   margin-top:4px;
 }
 
-/* 今日統計區塊固定數字寬度 */
-#statsCard {
-  display:flex;
-  justify-content:space-between;
+/* 今日統計固定 */
+#stats {
   text-align:center;
-}
-#statsCard div span {
-  display:inline-block;
-  width:60px;
+  font-weight:bold;
+  margin-bottom:14px;
 }
 </style>
 </head>
@@ -129,17 +137,15 @@ th {
 
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
-<!-- 第一層：輸入代號 -->
-<div class="card" id="codeCard">
-  輸入代號
-  <div style="display:flex; gap:10px;">
-    <input type="text" id="userCode" placeholder="代號">
-    <button onclick="enterCode()">確定</button>
-  </div>
+<!-- 代號登入 -->
+<div class="card" id="loginCard">
+  代號：
+  <input type="text" id="userCodeInput" placeholder="輸入代號">
+  <button onclick="login()">進入系統</button>
 </div>
 
-<!-- 第二層：主程式區塊 -->
-<div id="mainCard" style="display:none">
+<!-- 主畫面 -->
+<div id="mainScreen" style="display:none;">
 
   <!-- 日期 -->
   <div class="card">
@@ -166,21 +172,21 @@ th {
 
   <!-- 銷售表格 -->
   <div class="card">
-  <table>
-    <thead>
-      <tr>
-        <th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>刪除</th>
-      </tr>
-    </thead>
-    <tbody id="salesList"></tbody>
-  </table>
+    <table>
+      <thead>
+        <tr>
+          <th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>代號</th><th>刪除</th>
+        </tr>
+      </thead>
+      <tbody id="salesList"></tbody>
+    </table>
   </div>
 
   <!-- 今日統計 -->
-  <div class="card" id="statsCard">
-    <div>今日成本<br><span id="totalCost">0</span></div>
-    <div>今日收入<br><span id="totalRevenue">0</span></div>
-    <div>今日利潤<br><span id="totalProfit">0</span></div>
+  <div id="stats" class="card">
+    今日成本：<span id="totalCost">0</span> ｜ 
+    今日收入：<span id="totalRevenue">0</span> ｜ 
+    今日利潤：<span id="totalProfit">0</span>
   </div>
 
   <!-- 後台密碼 -->
@@ -212,39 +218,43 @@ th {
       </div>
       <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
     </div>
-
   </div>
+
 </div>
 
 <script>
-// 使用者代號
 let userCode = "";
+const adminPassword="1234";
+let products=[], sales=[];
 
-// 範例產品資料
-let products=[
-  {name:"雞蛋糕",cost:20,price:50},
-  {name:"奶酪杯",cost:25,price:60},
-  {name:"提拉米蘇杯",cost:30,price:70},
-  {name:"雪媚娘",cost:25,price:55},
-  {name:"紅糖糍粑",cost:15,price:40},
-  {name:"奶茶凍",cost:20,price:50},
-  {name:"桂花奶酪",cost:25,price:60},
-  {name:"華夫餅",cost:30,price:65}
-];
-
-let sales=[];
-
-// 輸入代號
-function enterCode(){
-  const code = document.getElementById("userCode").value.trim();
+// ---------------- 登入 ----------------
+function login(){
+  const code = document.getElementById("userCodeInput").value.trim();
   if(!code){ alert("請輸入代號"); return; }
   userCode = code;
-  document.getElementById("codeCard").style.display="none";
-  document.getElementById("mainCard").style.display="block";
+  document.getElementById("loginCard").style.display="none";
+  document.getElementById("mainScreen").style.display="block";
+  fetchProducts();
+  fetchSalesFromSheet();
+  setInterval(fetchSalesFromSheet, 5000); // 每5秒刷新
+}
+
+// ---------------- 本地測試商品 (可改為 Google Sheet 讀取) ----------------
+function fetchProducts(){
+  products = [
+    {name:"雞蛋糕",cost:20,price:50},
+    {name:"奶酪杯",cost:25,price:60},
+    {name:"提拉米蘇杯",cost:30,price:70},
+    {name:"雪媚娘",cost:25,price:55},
+    {name:"紅糖糍粑",cost:15,price:40},
+    {name:"奶茶凍",cost:20,price:50},
+    {name:"桂花奶酪",cost:25,price:60},
+    {name:"華夫餅",cost:30,price:65}
+  ];
   updateSelect();
 }
 
-// 更新商品選單
+// ---------------- 更新商品下拉選單 ----------------
 function updateSelect(){
   const s=document.getElementById("productSelect");
   s.innerHTML="";
@@ -256,34 +266,64 @@ function updateSelect(){
   });
 }
 
-// 新增銷售
+// ---------------- 新增銷售 ----------------
 function addSale(){
   const d=document.getElementById("dateInput").value;
   const i=document.getElementById("productSelect").value;
   const q=parseInt(document.getElementById("qtyInput").value);
   if(!d||q<=0) return;
-  sales.push({d,i,q,user:userCode}); // 帶上代號
-  saveSales();
-  renderSales();
+
+  const productObj = products[i];
+  const saleData = { 
+    date: d, 
+    product: productObj.name, 
+    qty: q, 
+    price: productObj.price,
+    user: userCode 
+  };
+
+  fetch("YOUR_WEB_APP_URL", {
+    method: "POST",
+    body: JSON.stringify(saleData),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    if(data.status==="success"){ fetchSalesFromSheet(); }
+    else alert("傳送失敗：" + data.msg);
+  })
+  .catch(err=>alert("傳送錯誤：" + err));
 }
 
-// 顯示銷售列表
+// ---------------- 讀取 Google Sheet 銷售 ----------------
+function fetchSalesFromSheet(){
+  fetch("https://script.google.com/macros/s/AKfycbwR9gETJY8xZWxV1yiT2SbufwvTPydCznxVxxzHcfO6QfeJOqVE0qCMtJn5Dew44TJaxA/exec")
+    .then(res => res.json())
+    .then(data => {
+      if(Array.isArray(data)){
+        sales = data;
+        renderSales();
+      }
+    })
+    .catch(err => console.log("讀取錯誤:", err));
+}
+
+// ---------------- 顯示銷售表格 ----------------
 function renderSales(){
   const list=document.getElementById("salesList");
   list.innerHTML="";
-  let cost=0,rev=0;
-  sales.forEach((s,idx)=>{
-    const p=products[s.i];
-    const r=p.price*s.q;
-    cost+=p.cost*s.q;
-    rev+=r;
+  let cost=0, rev=0;
+  sales.forEach((s, idx)=>{
+    const r = s.price*s.qty;
+    cost += products.find(p=>p.name===s.product)?.cost * s.qty || 0;
+    rev += r;
     const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td>${s.d.slice(5)}</td>
-      <td>${p.name}</td>
-      <td>${s.q}</td>
-      <td>${r}</td>
-      <td><button onclick="delSale(${idx})">刪除</button></td>`;
+    tr.innerHTML=`<td>${s.date.slice(5)}</td>
+                   <td>${s.product}</td>
+                   <td>${s.qty}</td>
+                   <td>${r}</td>
+                   <td>${s.user}</td>
+                   <td><button onclick="delSale(${idx})">刪除</button></td>`;
     list.appendChild(tr);
   });
   document.getElementById("totalCost").textContent=cost;
@@ -291,53 +331,31 @@ function renderSales(){
   document.getElementById("totalProfit").textContent=rev-cost;
 }
 
-// 刪除銷售
-function delSale(i){
-  if(confirm("確定刪除這筆銷售？")){
-    sales.splice(i,1);
-    saveSales();
-    renderSales();
-  }
-}
-
-// 後台管理
-const adminPassword="1234";
+// ---------------- 後台 ----------------
 function unlockBackend(){
   if(document.getElementById("adminPwd").value===adminPassword){
     document.getElementById("backend").style.display="block";
   } else alert("密碼錯誤");
 }
 
-// 渲染後台商品列表
 function renderBackend(){
   const box=document.getElementById("productList");
   box.innerHTML="";
   products.forEach((p,i)=>{
     const d=document.createElement("div");
     d.className="product-card";
-    d.innerHTML=`
-      <div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
-      <div class="product-row">
-        <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
-        <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
-      </div>
-      <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
+    d.innerHTML=`<div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
+    <div class="product-row">
+      <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
+      <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
+    </div>
+    <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
     box.appendChild(d);
   });
 }
 
-function updateP(i,f,v){
-  products[i][f]=parseFloat(v);
-  updateSelect(); renderSales(); renderBackend();
-}
-
-function delProduct(i){
-  if(confirm("確定刪除商品？")){
-    products.splice(i,1);
-    updateSelect(); renderBackend(); renderSales();
-  }
-}
-
+function updateP(i,f,v){ products[i][f]=parseFloat(v); updateSelect(); renderSales(); }
+function delProduct(i){ products.splice(i,1); updateSelect(); renderBackend(); renderSales(); }
 function addProduct(){
   const n=newName.value;
   const c=parseFloat(newCost.value);
@@ -348,13 +366,8 @@ function addProduct(){
   newName.value=newCost.value=newPrice.value="";
 }
 
-// 模擬存 Google Sheet
-function saveSales(){
-  console.log("回傳 Google Sheet:", sales);
-}
-
-// 初始化
-updateSelect(); renderBackend();
+updateSelect(); renderSales(); renderBackend();
 </script>
+
 </body>
 </html>
