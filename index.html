@@ -24,7 +24,33 @@ body {
   text-align:center;
 }
 
-/* 通用按鈕 */
+/* 所有輸入安全設定 */
+input, select, button {
+  font-size:16px;
+  height:44px;
+  width:100%;
+  box-sizing:border-box;
+  border:none;
+  border-radius:12px;
+  background:#f2f2f7;
+  text-align:center;
+}
+
+/* 日期輸入框縮小、置中，底色白、無框線 */
+#dateInput {
+  background: #fff;   
+  border: none;       
+  width: 60%;         
+  max-width: 300px;   
+  margin: 0 auto;     
+  display: block;     
+  text-align: center; 
+  height: 32px;       /* 調整高度 */
+  line-height: 32px;  /* 垂直置中 */
+  border-radius: 8px; /* 圓角稍微小一些 */
+}
+
+/* 按鈕 */
 button {
   background:#007aff;
   color:#fff;
@@ -38,13 +64,16 @@ table {
 th, td {
   border:1px solid #ccc;
   padding:6px;
-  text-align:center;
+  text-align:center; 
 }
 th {
   background:#f0f0f0;
 }
+td:first-child, td:nth-child(2) {
+  text-align:center;
+}
 
-/* 後台密碼列回到原版 */
+/* 後台密碼列 */
 .admin-row {
   display:flex;
   gap:10px;
@@ -71,41 +100,6 @@ th {
 .product-row div input {
   width:100%;
   margin-top:4px;
-  text-align:center;
-}
-
-/* 分區塊設定 */
-
-/* 日期區塊 */
-#dateInput {
-  width: 60%;
-  max-width: 300px;
-  margin: 0 auto;
-  display: block;
-  text-align: center;
-  height: 32px;
-  line-height: 32px;
-  border-radius: 8px;
-  background: #fff;
-  border: none;
-}
-
-/* 商品選擇區塊回到上一版，只置中 */
-#productSelect {
-  display: block;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* 份數區塊 */
-#qtyInput {
-  width: 40%;
-  max-width: 150px;
-  margin: 0 auto;
-  display: block;
-  text-align: center;
-  height: 32px;
-  border-radius: 8px;
 }
 </style>
 </head>
@@ -173,19 +167,19 @@ th {
 <div class="product-card">
   <!-- 第一行 -->
   <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
-  <input id="newName" placeholder="商品名稱" style="width:100%; text-align:center; margin-bottom:6px;">
-
-  <!-- 第二行：成本 & 售價 -->
+  <!-- 第二行 -->
   <div class="product-row">
-    <div style="flex:1; text-align:center;">
-      成本<input id="newCost" type="number" placeholder="成本">
+    <div style="flex:1; text-align:center;">商品名稱
+      <input id="newName" placeholder="名稱">
     </div>
-    <div style="flex:1; text-align:center;">
-      售價<input id="newPrice" type="number" placeholder="售價">
+    <div style="flex:1; text-align:center;">成本
+      <input id="newCost" type="number" placeholder="成本">
+    </div>
+    <div style="flex:1; text-align:center;">售價
+      <input id="newPrice" type="number" placeholder="售價">
     </div>
   </div>
-
-  <!-- 第三行：新增商品按鈕 -->
+  <!-- 第三行 -->
   <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
 </div>
 
