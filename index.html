@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>甜點銷售記帳</title>
-
 <style>
 body {
   font-family: -apple-system, BlinkMacSystemFont, Arial;
@@ -56,21 +55,13 @@ input, select, button {
   max-width: 300px;
   margin: 0 auto;
   display: block;
-  text-align-last: center;
-  -moz-text-align-last: center;
-  -webkit-appearance: none;
+  text-align-last: center;     
+  -moz-text-align-last: center; 
+  -webkit-appearance: none;    
   appearance: none;
   height: 32px;
   border-radius: 8px;
   background: #fff;
-}
-
-/* 卡片內輸入框置中 */
-.code-card input {
-  width: 90%;
-  max-width: 280px;
-  margin: 0 auto;
-  display: block;
 }
 
 /* 按鈕 */
@@ -93,6 +84,16 @@ th {
   background:#f0f0f0;
 }
 
+/* 後台密碼列 */
+.admin-row {
+  display:flex;
+  gap:10px;
+}
+.admin-row input,
+.admin-row button {
+  flex:1;
+}
+
 /* 後台商品卡片 */
 .product-card {
   border:1px solid #ddd;
@@ -111,22 +112,34 @@ th {
   width:100%;
   margin-top:4px;
 }
+
+/* 今日統計區塊固定數字寬度 */
+#statsCard {
+  display:flex;
+  justify-content:space-between;
+  text-align:center;
+}
+#statsCard div span {
+  display:inline-block;
+  width:60px;
+}
 </style>
 </head>
-
 <body>
 
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
-<!-- 第一層：代號輸入 -->
-<div id="loginLayer" class="card code-card">
-  代號
-  <input type="text" id="userCode" placeholder="請輸入代號">
-  <button onclick="login()">進入系統</button>
+<!-- 第一層：輸入代號 -->
+<div class="card" id="codeCard">
+  輸入代號
+  <div style="display:flex; gap:10px;">
+    <input type="text" id="userCode" placeholder="代號">
+    <button onclick="enterCode()">確定</button>
+  </div>
 </div>
 
-<!-- 第二層：系統主畫面 -->
-<div id="mainLayer" style="display:none;">
+<!-- 第二層：主程式區塊 -->
+<div id="mainCard" style="display:none">
 
   <!-- 日期 -->
   <div class="card">
@@ -153,29 +166,32 @@ th {
 
   <!-- 銷售表格 -->
   <div class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>代號</th><th>刪除</th>
-        </tr>
-      </thead>
-      <tbody id="salesList"></tbody>
-    </table>
+  <table>
+    <thead>
+      <tr>
+        <th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>刪除</th>
+      </tr>
+    </thead>
+    <tbody id="salesList"></tbody>
+  </table>
   </div>
 
   <!-- 今日統計 -->
+  <div class="card" id="statsCard">
+    <div>今日成本<br><span id="totalCost">0</span></div>
+    <div>今日收入<br><span id="totalRevenue">0</span></div>
+    <div>今日利潤<br><span id="totalProfit">0</span></div>
+  </div>
+
+  <!-- 後台密碼 -->
   <div class="card">
-    今日成本：<span id="totalCost">0</span><br>
-    今日收入：<span id="totalRevenue">0</span><br>
-    今日利潤：<span id="totalProfit">0</span>
+    <div class="admin-row">
+      <input type="password" id="adminPwd" placeholder="後台密碼">
+      <button onclick="unlockBackend()">進入後台</button>
+    </div>
   </div>
 
   <!-- 後台 -->
-  <div class="card">
-    <input type="password" id="adminPwd" placeholder="後台密碼">
-    <button onclick="unlockBackend()">進入後台</button>
-  </div>
-
   <div id="backend" style="display:none" class="card">
     <h3>商品管理</h3>
     <div id="productList"></div>
@@ -196,42 +212,39 @@ th {
       </div>
       <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
     </div>
-  </div>
 
+  </div>
 </div>
 
 <script>
-// 範例產品
-let products = JSON.parse(localStorage.getItem("products"))||[
-{name:"雞蛋糕",cost:20,price:50},
-{name:"奶酪杯",cost:25,price:60},
-{name:"提拉米蘇杯",cost:30,price:70},
-{name:"雪媚娘",cost:25,price:55},
-{name:"紅糖糍粑",cost:15,price:40},
-{name:"奶茶凍",cost:20,price:50},
-{name:"桂花奶酪",cost:25,price:60},
-{name:"華夫餅",cost:30,price:65}
+// 使用者代號
+let userCode = "";
+
+// 範例產品資料
+let products=[
+  {name:"雞蛋糕",cost:20,price:50},
+  {name:"奶酪杯",cost:25,price:60},
+  {name:"提拉米蘇杯",cost:30,price:70},
+  {name:"雪媚娘",cost:25,price:55},
+  {name:"紅糖糍粑",cost:15,price:40},
+  {name:"奶茶凍",cost:20,price:50},
+  {name:"桂花奶酪",cost:25,price:60},
+  {name:"華夫餅",cost:30,price:65}
 ];
 
-let sales = JSON.parse(localStorage.getItem("sales"))||[];
-let userCodeGlobal = "";
+let sales=[];
 
-// 儲存
-function save(){
-  localStorage.setItem("products",JSON.stringify(products));
-  localStorage.setItem("sales",JSON.stringify(sales));
-}
-
-// 登入驗證
-function login(){
+// 輸入代號
+function enterCode(){
   const code = document.getElementById("userCode").value.trim();
   if(!code){ alert("請輸入代號"); return; }
-  userCodeGlobal = code;
-  document.getElementById("loginLayer").style.display="none";
-  document.getElementById("mainLayer").style.display="block";
+  userCode = code;
+  document.getElementById("codeCard").style.display="none";
+  document.getElementById("mainCard").style.display="block";
+  updateSelect();
 }
 
-// 更新商品選擇
+// 更新商品選單
 function updateSelect(){
   const s=document.getElementById("productSelect");
   s.innerHTML="";
@@ -249,17 +262,16 @@ function addSale(){
   const i=document.getElementById("productSelect").value;
   const q=parseInt(document.getElementById("qtyInput").value);
   if(!d||q<=0) return;
-  sales.push({code:userCodeGlobal, d,i,q});
-  save();
+  sales.push({d,i,q,user:userCode}); // 帶上代號
+  saveSales();
   renderSales();
-  // 這裡可以呼叫 Google Apps Script API，即時回傳 code/d/i/q
 }
 
-// 渲染銷售列表
+// 顯示銷售列表
 function renderSales(){
   const list=document.getElementById("salesList");
   list.innerHTML="";
-  let cost=0, rev=0;
+  let cost=0,rev=0;
   sales.forEach((s,idx)=>{
     const p=products[s.i];
     const r=p.price*s.q;
@@ -267,12 +279,11 @@ function renderSales(){
     rev+=r;
     const tr=document.createElement("tr");
     tr.innerHTML=`
-    <td>${s.d.slice(5)}</td>
-    <td>${p.name}</td>
-    <td>${s.q}</td>
-    <td>${r}</td>
-    <td>${s.code}</td>
-    <td><button onclick="delSale(${idx})">刪除</button></td>`;
+      <td>${s.d.slice(5)}</td>
+      <td>${p.name}</td>
+      <td>${s.q}</td>
+      <td>${r}</td>
+      <td><button onclick="delSale(${idx})">刪除</button></td>`;
     list.appendChild(tr);
   });
   document.getElementById("totalCost").textContent=cost;
@@ -280,10 +291,12 @@ function renderSales(){
   document.getElementById("totalProfit").textContent=rev-cost;
 }
 
+// 刪除銷售
 function delSale(i){
   if(confirm("確定刪除這筆銷售？")){
     sales.splice(i,1);
-    save(); renderSales();
+    saveSales();
+    renderSales();
   }
 }
 
@@ -295,6 +308,7 @@ function unlockBackend(){
   } else alert("密碼錯誤");
 }
 
+// 渲染後台商品列表
 function renderBackend(){
   const box=document.getElementById("productList");
   box.innerHTML="";
@@ -302,25 +316,25 @@ function renderBackend(){
     const d=document.createElement("div");
     d.className="product-card";
     d.innerHTML=`
-    <div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
-    <div class="product-row">
-      <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
-      <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
-    </div>
-    <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
+      <div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
+      <div class="product-row">
+        <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
+        <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
+      </div>
+      <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
     box.appendChild(d);
   });
 }
 
 function updateP(i,f,v){
   products[i][f]=parseFloat(v);
-  save(); updateSelect(); renderSales();
+  updateSelect(); renderSales(); renderBackend();
 }
 
 function delProduct(i){
   if(confirm("確定刪除商品？")){
     products.splice(i,1);
-    save(); updateSelect(); renderBackend(); renderSales();
+    updateSelect(); renderBackend(); renderSales();
   }
 }
 
@@ -329,14 +343,18 @@ function addProduct(){
   const c=parseFloat(newCost.value);
   const p=parseFloat(newPrice.value);
   if(!n||!c||!p) return;
-  products.push({name:n, cost:c, price:p});
-  save(); updateSelect(); renderBackend();
+  products.push({name:n,cost:c,price:p});
+  updateSelect(); renderBackend();
   newName.value=newCost.value=newPrice.value="";
 }
 
-// 初始化
-updateSelect(); renderSales(); renderBackend();
-</script>
+// 模擬存 Google Sheet
+function saveSales(){
+  console.log("回傳 Google Sheet:", sales);
+}
 
+// 初始化
+updateSelect(); renderBackend();
+</script>
 </body>
 </html>
