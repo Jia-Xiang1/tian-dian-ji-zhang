@@ -54,31 +54,48 @@ th {
   padding:4px;
   width:100%;
   box-sizing:border-box;
+  text-align:center;
 }
 
-/* 商品下拉選單（原生感） */
-#productSelect {
-  -webkit-appearance:none;
-  appearance:none;
-
-  font-size:1.1em;
-  padding:8px 36px 8px 12px;
-  width:100%;
-  box-sizing:border-box;
-
-  border-radius:10px;
-  border:1px solid #d1d1d6;
-  background-color:#f2f2f7;
-
-  text-align:center;
-
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%238e8e93' stroke-width='2'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 12px center;
+/* 假選單（商品） */
+.custom-select {
+  position: relative;
+  font-size: 1.1em;
+  width: 100%;
+  background: #f2f2f7;
+  border-radius: 10px;
+  border: 1px solid #d1d1d6;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
-#productSelect option {
-  text-align:center;
+.custom-select .selected {
+  padding: 10px;
+  text-align: center;  /* 文字置中 */
+}
+
+.custom-select .options {
+  display: none;      /* 預設隱藏 */
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 1px solid #d1d1d6;
+  max-height: 200px;  /* 可滾動 */
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.custom-select .option {
+  padding: 10px;
+  text-align: center;  /* 文字置中 */
+}
+
+.custom-select .option:hover {
+  background: #e5e5ea;
 }
 
 /* 新增按鈕 */
@@ -106,16 +123,19 @@ th {
 
 <div class="form-card">
   商品<br>
-  <select id="productSelect">
-    <option>雞蛋糕</option>
-    <option>奶酪杯</option>
-    <option>提拉米蘇杯</option>
-    <option>雪媚娘</option>
-    <option>紅糖糍粑</option>
-    <option>奶茶凍</option>
-    <option>桂花奶酪</option>
-    <option>華夫餅</option>
-  </select>
+  <div class="custom-select" id="customProductSelect">
+    <div class="selected">雞蛋糕</div>
+    <div class="options">
+      <div class="option">雞蛋糕</div>
+      <div class="option">奶酪杯</div>
+      <div class="option">提拉米蘇杯</div>
+      <div class="option">雪媚娘</div>
+      <div class="option">紅糖糍粑</div>
+      <div class="option">奶茶凍</div>
+      <div class="option">桂花奶酪</div>
+      <div class="option">華夫餅</div>
+    </div>
+  </div>
 </div>
 
 <div class="form-card">
@@ -126,6 +146,34 @@ th {
 <div class="form-card">
   <button id="addBtn">新增</button>
 </div>
+
+<script>
+// 假選單 JS
+const select = document.getElementById('customProductSelect');
+const selected = select.querySelector('.selected');
+const optionsContainer = select.querySelector('.options');
+const options = optionsContainer.querySelectorAll('.option');
+
+// 點擊切換選單
+selected.addEventListener('click', () => {
+  optionsContainer.style.display = optionsContainer.style.display === 'block' ? 'none' : 'block';
+});
+
+// 點選商品
+options.forEach(option => {
+  option.addEventListener('click', () => {
+    selected.textContent = option.textContent;
+    optionsContainer.style.display = 'none';
+  });
+});
+
+// 點外面收起選單
+document.addEventListener('click', (e) => {
+  if (!select.contains(e.target)) {
+    optionsContainer.style.display = 'none';
+  }
+});
+</script>
 
 </body>
 </html>
