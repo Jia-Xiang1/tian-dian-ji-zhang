@@ -24,7 +24,7 @@ body {
   text-align:center;
 }
 
-/* 所有輸入安全設定 */
+/* 輸入 */
 input, select, button {
   font-size:16px;
   height:44px;
@@ -36,39 +36,33 @@ input, select, button {
   text-align:center;
 }
 
-/* 日期輸入框縮小、置中，底色白、無框線 */
+/* 日期 */
 #dateInput {
-  background: #fff;   
-  border: none;       
-  width: 60%;         
-  max-width: 300px;   
-  margin: 0 auto;     
-  display: block;     
-  text-align: center; 
-  height: 32px;       
-  line-height: 32px;  
-  border-radius: 8px; 
+  background:#fff;
+  border:none;
+  width:60%;
+  max-width:300px;
+  margin:0 auto;
+  display:block;
+  text-align:center;
+  height:32px;
+  line-height:32px;
+  border-radius:8px;
 }
 
-/* 商品選擇欄文字置中 */
+/* 商品選擇 */
 #productSelect {
-  width: 60%;
-  max-width: 300px;
-  margin: 0 auto;
-  display: block;
-  text-align-last: center;      
-  -moz-text-align-last: center; 
-  -webkit-appearance: none;     
-  appearance: none;
-  height: 32px;
-  border-radius: 8px;
-  background: #fff;
-}
-
-/* 按鈕 */
-button {
-  background:#007aff;
-  color:#fff;
+  width:60%;
+  max-width:300px;
+  margin:0 auto;
+  display:block;
+  text-align-last:center;
+  -moz-text-align-last:center;
+  -webkit-appearance:none;
+  appearance:none;
+  height:32px;
+  border-radius:8px;
+  background:#fff;
 }
 
 /* 表格 */
@@ -79,13 +73,13 @@ table {
 th, td {
   border:1px solid #ccc;
   padding:6px;
-  text-align:center; 
+  text-align:center;
 }
 th {
   background:#f0f0f0;
 }
 
-/* 後台密碼列 */
+/* 後台列 */
 .admin-row {
   display:flex;
   gap:10px;
@@ -95,7 +89,7 @@ th {
   flex:1;
 }
 
-/* 後台商品卡片 */
+/* 商品卡片 */
 .product-card {
   border:1px solid #ddd;
   border-radius:12px;
@@ -103,7 +97,7 @@ th {
   margin-bottom:10px;
 }
 
-/* 商品成本/售價列 */
+/* 商品成本/售價 */
 .product-row {
   display:flex;
   justify-content:space-between;
@@ -114,25 +108,20 @@ th {
   margin-top:4px;
 }
 
-/* 分頁按鈕高亮 */
-.tab-active {
-  background:#34c759 !important;
-}
-
-/* 底部 Tab Bar */
+/* 底部按鈕 */
 .bottom-tab {
   position:fixed;
   bottom:0;
   left:0;
   width:100%;
-  background:#fff;
   display:flex;
   border-top:1px solid #ddd;
+  background:#fff;
 }
 .bottom-tab button {
   flex:1;
-  border-radius:0;
   height:50px;
+  border-radius:0;
 }
 </style>
 </head>
@@ -141,49 +130,38 @@ th {
 
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
-<!-- 使用者輸入頁 -->
+<!-- 使用者頁 -->
 <div id="userPage" class="card">
   使用者名稱
   <input type="text" id="userNameInput" placeholder="請輸入姓名">
   <button onclick="enterApp()" style="margin-top:12px;">確認</button>
 </div>
 
-<!-- 主頁容器 -->
+<!-- 主頁 -->
 <div id="mainApp" style="display:none;">
-
-  <!-- 分頁按鈕 -->
-  <div class="card">
-    <button class="tab-btn" id="tab-sale" onclick="showPage('sale')">銷售記帳</button>
-    <button class="tab-btn" id="tab-admin" onclick="showPage('admin')">商品後台</button>
-  </div>
 
   <!-- 銷售頁 -->
   <div id="page-sale">
 
-    <!-- 日期 -->
     <div class="card">
       日期
       <input type="date" id="dateInput">
     </div>
 
-    <!-- 商品 -->
     <div class="card">
       商品
       <select id="productSelect"></select>
     </div>
 
-    <!-- 份數 -->
     <div class="card">
       份數
       <input type="number" id="qtyInput" min="1" value="1">
     </div>
 
-    <!-- 新增 -->
     <div class="card">
       <button onclick="addSale()">新增銷售</button>
     </div>
 
-    <!-- 銷售表格 -->
     <div class="card">
       <table>
         <thead>
@@ -195,7 +173,6 @@ th {
       </table>
     </div>
 
-    <!-- 今日統計 -->
     <div class="card">
       今日成本：<span id="totalCost">0</span><br>
       今日收入：<span id="totalRevenue">0</span><br>
@@ -207,7 +184,6 @@ th {
   <!-- 後台頁 -->
   <div id="page-admin" style="display:none">
 
-    <!-- 後台密碼 -->
     <div class="card">
       <div class="admin-row">
         <input type="password" id="adminPwd" placeholder="後台密碼">
@@ -215,12 +191,10 @@ th {
       </div>
     </div>
 
-    <!-- 後台內容 -->
     <div id="backend" style="display:none" class="card">
       <h3>商品管理</h3>
       <div id="productList"></div>
 
-      <!-- 新增商品區 -->
       <div class="product-card">
         <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
         <div class="product-row">
@@ -240,10 +214,10 @@ th {
 
   </div>
 
-  <!-- 底部 Tab Bar -->
+  <!-- 底部 Tab -->
   <div class="bottom-tab">
-    <button class="tab-btn" id="tab-sale" onclick="showPage('sale')">銷售</button>
-    <button class="tab-btn" id="tab-admin" onclick="showPage('admin')">後台</button>
+    <button onclick="showPage('sale')">前台</button>
+    <button onclick="showPage('admin')">後台</button>
   </div>
 
 </div>
@@ -264,45 +238,41 @@ let products=JSON.parse(localStorage.getItem("products"))||[
 
 let sales=JSON.parse(localStorage.getItem("sales"))||[];
 
-// 進入 APP
+// 進入 App
 function enterApp(){
   const user = document.getElementById("userNameInput").value.trim();
-  if(!user){
-    alert("請先輸入使用者名稱！");
-    return;
-  }
+  if(!user){ alert("請輸入姓名！"); return; }
   localStorage.setItem("currentUser", user);
   document.getElementById("userPage").style.display="none";
   document.getElementById("mainApp").style.display="block";
   updateSelect();
   renderSales();
   renderBackend();
-  showPage("sale"); // 直接進前台銷售頁
+  showPage('sale'); // 進前台
 }
 
 // 新增銷售
 function addSale(){
   const user = localStorage.getItem("currentUser");
-  if(!user){
-    alert("請先輸入使用者名稱！");
-    return;
-  }
+  if(!user){ alert("請先輸入使用者名稱！"); return; }
 
-  const d = document.getElementById("dateInput").value;
-  const i = document.getElementById("productSelect").value;
-  const q = parseInt(document.getElementById("qtyInput").value);
-  if(!d || q <= 0) return;
+  const d=document.getElementById("dateInput").value;
+  const i=document.getElementById("productSelect").value;
+  const q=parseInt(document.getElementById("qtyInput").value);
+  if(!d || q<=0) return;
 
-  sales.push({ d,i,q,user });
+  sales.push({d,i,q,user});
   save();
   renderSales();
 }
 
+// localStorage 保存
 function save(){
-  localStorage.setItem("products",JSON.stringify(products));
-  localStorage.setItem("sales",JSON.stringify(sales));
+  localStorage.setItem("products", JSON.stringify(products));
+  localStorage.setItem("sales", JSON.stringify(sales));
 }
 
+// 更新商品下拉
 function updateSelect(){
   const s=document.getElementById("productSelect");
   s.innerHTML="";
@@ -314,10 +284,11 @@ function updateSelect(){
   });
 }
 
+// 顯示銷售表
 function renderSales(){
   const list=document.getElementById("salesList");
   list.innerHTML="";
-  let cost=0,rev=0;
+  let cost=0, rev=0;
   sales.forEach((s,idx)=>{
     const p=products[s.i];
     const r=p.price*s.q;
@@ -340,23 +311,21 @@ function renderSales(){
 }
 
 function delSale(i){
-  if(confirm("確定刪除這筆銷售？")){
+  if(confirm("確定刪除？")){
     sales.splice(i,1);
     save();
     renderSales();
   }
 }
 
+// 後台
 function unlockBackend(){
   const user = localStorage.getItem("currentUser");
-  if(!user){
-    alert("請先輸入使用者名稱！");
-    return;
-  }
+  if(!user){ alert("請先輸入使用者名稱！"); return; }
 
   if(document.getElementById("adminPwd").value===adminPassword){
     document.getElementById("backend").style.display="block";
-  }else alert("密碼錯誤");
+  } else alert("密碼錯誤");
 }
 
 function renderBackend(){
@@ -385,7 +354,7 @@ function updateP(i,f,v){
 }
 
 function delProduct(i){
-  if(confirm("確定刪除商品？")){
+  if(confirm("確定刪除？")){
     products.splice(i,1);
     save();
     updateSelect();
@@ -398,7 +367,7 @@ function addProduct(){
   const n=newName.value;
   const c=parseFloat(newCost.value);
   const p=parseFloat(newPrice.value);
-  if(!n||!c||!p)return;
+  if(!n||!c||!p) return;
   products.push({name:n,cost:c,price:p});
   save();
   updateSelect();
@@ -406,23 +375,13 @@ function addProduct(){
   newName.value=newCost.value=newPrice.value="";
 }
 
-// 分頁控制
+// 顯示頁面
 function showPage(p){
   const user = localStorage.getItem("currentUser");
-  if(!user){
-    alert("請先輸入使用者名稱！");
-    return;
-  }
+  if(!user){ alert("請先輸入使用者名稱！"); return; }
 
-  const sale=document.getElementById("page-sale");
-  const admin=document.getElementById("page-admin");
-  sale.style.display = p==='sale' ? "block":"none";
-  admin.style.display = p==='admin' ? "block":"none";
-
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("tab-active"));
-  document.getElementById("tab-"+p).classList.add("tab-active");
-
-  localStorage.setItem("currentPage",p);
+  document.getElementById("page-sale").style.display = p==='sale' ? "block":"none";
+  document.getElementById("page-admin").style.display = p==='admin' ? "block":"none";
 }
 </script>
 
