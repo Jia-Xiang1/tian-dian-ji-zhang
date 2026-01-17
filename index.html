@@ -24,30 +24,7 @@ body {
   text-align:center;
 }
 
-/* 所有輸入安全設定 */
-input, select, button {
-  font-size:16px;
-  height:44px;
-  width:100%;
-  box-sizing:border-box;
-  border:none;
-  border-radius:12px;
-  background:#f2f2f7;
-  text-align:center;
-}
-
-/* 日期輸入框縮小、置中，底色白、無框線 */
-#dateInput {
-  background: #fff;   
-  border: none;       
-  width: 60%;         
-  max-width: 300px;   
-  margin: 0 auto;     
-  display: block;     
-  text-align: center; 
-}
-
-/* 按鈕 */
+/* 通用按鈕 */
 button {
   background:#007aff;
   color:#fff;
@@ -61,13 +38,10 @@ table {
 th, td {
   border:1px solid #ccc;
   padding:6px;
-  text-align:center; 
+  text-align:center;
 }
 th {
   background:#f0f0f0;
-}
-td:first-child, td:nth-child(2) {
-  text-align:center;
 }
 
 /* 後台密碼列 */
@@ -97,6 +71,47 @@ td:first-child, td:nth-child(2) {
 .product-row div input {
   width:100%;
   margin-top:4px;
+  height:32px; /* 與其他框高度一致 */
+}
+
+/* 分區塊設定 */
+
+/* 日期區塊 */
+#dateInput {
+  width: 60%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+  height: 32px;
+  line-height: 32px;
+  border-radius: 8px;
+  background: #fff;
+  border: none;
+}
+
+/* 商品選擇區塊 */
+#productSelect {
+  width: 60%;
+  max-width: 300px;
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+  height: 32px;
+  border-radius: 8px;
+  background: #fff;
+  border: none;
+}
+
+/* 份數區塊 */
+#qtyInput {
+  width: 40%;
+  max-width: 150px;
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+  height: 32px;
+  border-radius: 8px;
 }
 </style>
 </head>
