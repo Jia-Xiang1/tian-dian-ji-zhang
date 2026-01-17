@@ -44,7 +44,7 @@ th {
   background:#f0f0f0;
 }
 
-/* 後台密碼列 */
+/* 後台密碼列回到原版 */
 .admin-row {
   display:flex;
   gap:10px;
@@ -71,7 +71,7 @@ th {
 .product-row div input {
   width:100%;
   margin-top:4px;
-  height:32px; /* 與其他框高度一致 */
+  text-align:center;
 }
 
 /* 分區塊設定 */
@@ -90,17 +90,11 @@ th {
   border: none;
 }
 
-/* 商品選擇區塊 */
+/* 商品選擇區塊回到上一版，只置中 */
 #productSelect {
-  width: 60%;
-  max-width: 300px;
-  margin: 0 auto;
   display: block;
+  margin: 0 auto;
   text-align: center;
-  height: 32px;
-  border-radius: 8px;
-  background: #fff;
-  border: none;
 }
 
 /* 份數區塊 */
@@ -179,19 +173,19 @@ th {
 <div class="product-card">
   <!-- 第一行 -->
   <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
-  <!-- 第二行 -->
+  <input id="newName" placeholder="商品名稱" style="width:100%; text-align:center; margin-bottom:6px;">
+
+  <!-- 第二行：成本 & 售價 -->
   <div class="product-row">
-    <div style="flex:1; text-align:center;">商品名稱
-      <input id="newName" placeholder="名稱">
+    <div style="flex:1; text-align:center;">
+      成本<input id="newCost" type="number" placeholder="成本">
     </div>
-    <div style="flex:1; text-align:center;">成本
-      <input id="newCost" type="number" placeholder="成本">
-    </div>
-    <div style="flex:1; text-align:center;">售價
-      <input id="newPrice" type="number" placeholder="售價">
+    <div style="flex:1; text-align:center;">
+      售價<input id="newPrice" type="number" placeholder="售價">
     </div>
   </div>
-  <!-- 第三行 -->
+
+  <!-- 第三行：新增商品按鈕 -->
   <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
 </div>
 
