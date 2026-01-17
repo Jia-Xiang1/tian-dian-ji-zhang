@@ -2,106 +2,105 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>甜點記帳</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>甜點記帳 (不放大版)</title>
 <style>
-body { 
-  font-family: Arial; 
-  max-width:700px; 
-  margin:auto; 
-  padding:16px; 
+body {
+  font-family: Arial;
+  max-width:700px;
+  margin:auto;
+  padding:16px;
   background:#f2f2f7;
 }
 
-/* 表格 */
-table { 
-  width:100%; 
-  border-collapse:collapse; 
-  margin-top:10px; 
-}
-th, td { 
-  border:1px solid #ccc; 
-  padding:8px; 
-  text-align:center; 
-}
-th { 
-  background:#f0f0f0; 
-}
-
-/* 輸入卡片 */
-.form-card {
-  background:#fff;
-  border-radius:14px;
-  padding:12px 14px;
-  margin-bottom:12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
-  font-size:1.4em;
-}
-
-/* 日期 / 份數 */
-#dateInput, #qtyInput, #adminPassword {
-  font-size:16px;               /* iPhone 防放大 */
-  -webkit-text-size-adjust:100%; 
-  padding:8px;
+table {
   width:100%;
-  box-sizing:border-box;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+th, td {
+  border:1px solid #ccc;
+  padding:5px;
   text-align:center;
 }
 
-/* 新增按鈕 / 進入後台按鈕 */
-#addBtn, #unlockBtn {
+th {
+  background:#f0f0f0;
+}
+
+.form-card {
+  background:#fff;
+  border-radius:14px;
+  padding:10px 12px 14px;
+  margin-bottom:12px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
+  font-size:16px; /* 16px 不會被自動放大 */
+  -webkit-text-size-adjust:100%;
+}
+
+/* 輸入欄位統一 16px */
+input, select, button {
   font-size:16px;
   -webkit-text-size-adjust:100%;
-  padding:10px;
-  width:100%;
+  padding:8px;
   box-sizing:border-box;
-  border:none;
-  border-radius:12px;
-  background:#007aff;
-  color:#fff;
-  cursor:pointer;
+  width:100%;
+  text-align:center;
+  border-radius:10px;
+  border:1px solid #ccc;
 }
 
 /* 假選單（商品） */
 .custom-select {
   position: relative;
-  font-size:16px;
-  width:100%;
-  background: #f2f2f7;
-  border-radius: 10px;
-  border: 1px solid #d1d1d6;
+  width: 100%;
   cursor: pointer;
-  box-sizing: border-box;
 }
+
 .custom-select .selected {
-  padding: 10px;
-  text-align: center;
+  padding:10px;
+  text-align:center;
+  background:#f2f2f7;
+  border-radius:10px;
 }
+
 .custom-select .options {
   display: none;
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: #fff;
-  border-radius: 10px;
-  border: 1px solid #d1d1d6;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 100;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-.custom-select .option {
-  padding: 10px;
-  text-align: center;
-}
-.custom-select .option:hover {
-  background: #e5e5ea;
+  top:100%;
+  left:0;
+  width:100%;
+  background:#fff;
+  border-radius:10px;
+  border:1px solid #d1d1d6;
+  max-height:200px;
+  overflow-y:auto;
+  z-index:100;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
 
-/* 今日統計 */
+.custom-select .option {
+  padding:10px;
+  text-align:center;
+}
+
+.custom-select .option:hover {
+  background:#e5e5ea;
+}
+
+/* 新增按鈕 */
+#addBtn {
+  background:#007aff;
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+}
+
+/* 統計區塊 */
 #totals {
-  font-size:1.2em;
+  font-size:16px;
   padding:10px;
   background:#fff;
   border-radius:12px;
@@ -109,30 +108,22 @@ th {
   margin-top:12px;
 }
 
-/* 後台欄位 */
+/* 後台密碼區塊 */
 #backendWrapper {
   display:none;
-  margin-top:12px;
-}
-#backendWrapper input {
-  font-size:16px;
-  padding:4px;
-  width:60px;
-  margin-right:8px;
 }
 </style>
 </head>
-
 <body>
+
 <h2>甜點銷售記帳</h2>
 
-<!-- 日期 -->
+<!-- 輸入區 -->
 <div class="form-card">
   日期<br>
   <input type="date" id="dateInput">
 </div>
 
-<!-- 商品 -->
 <div class="form-card">
   商品<br>
   <div class="custom-select" id="customProductSelect">
@@ -150,13 +141,11 @@ th {
   </div>
 </div>
 
-<!-- 份數 -->
 <div class="form-card">
   份數<br>
   <input type="number" id="qtyInput" min="1" value="1">
 </div>
 
-<!-- 新增按鈕 -->
 <div class="form-card">
   <button id="addBtn">新增</button>
 </div>
@@ -181,7 +170,7 @@ th {
 <div id="totals" class="form-card">
   <strong>今日總成本：</strong><span id="totalCost">0</span> 元<br>
   <strong>今日總收入：</strong><span id="totalRevenue">0</span> 元<br>
-  <strong>今日總利潤：</strong><span id="totalProfit">0</span>
+  <strong>今日總利潤：</strong><span id="totalProfit">0</span> 元
 </div>
 
 <!-- 後台密碼 -->
@@ -193,14 +182,38 @@ th {
 <!-- 後台成本/售價 -->
 <div id="backendWrapper" class="form-card">
   <h3>後台設定成本與售價（單位：元）</h3>
-  <div>雞蛋糕 成本 <input type="number" id="cost_雞蛋糕" value="10"> 售價 <input type="number" id="price_雞蛋糕" value="20"></div>
-  <div>奶酪杯 成本 <input type="number" id="cost_奶酪杯" value="8"> 售價 <input type="number" id="price_奶酪杯" value="15"></div>
-  <div>提拉米蘇杯 成本 <input type="number" id="cost_提拉米蘇杯" value="12"> 售價 <input type="number" id="price_提拉米蘇杯" value="25"></div>
-  <div>雪媚娘 成本 <input type="number" id="cost_雪媚娘" value="9"> 售價 <input type="number" id="price_雪媚娘" value="18"></div>
-  <div>紅糖糍粑 成本 <input type="number" id="cost_紅糖糍粑" value="7"> 售價 <input type="number" id="price_紅糖糍粑" value="14"></div>
-  <div>奶茶凍 成本 <input type="number" id="cost_奶茶凍" value="8"> 售價 <input type="number" id="price_奶茶凍" value="16"></div>
-  <div>桂花奶酪 成本 <input type="number" id="cost_桂花奶酪" value="9"> 售價 <input type="number" id="price_桂花奶酪" value="17"></div>
-  <div>華夫餅 成本 <input type="number" id="cost_華夫餅" value="10"> 售價 <input type="number" id="price_華夫餅" value="20"></div>
+  <div>
+    雞蛋糕 成本 <input type="number" id="cost_雞蛋糕" value="10">
+    售價 <input type="number" id="price_雞蛋糕" value="20">
+  </div>
+  <div>
+    奶酪杯 成本 <input type="number" id="cost_奶酪杯" value="8">
+    售價 <input type="number" id="price_奶酪杯" value="15">
+  </div>
+  <div>
+    提拉米蘇杯 成本 <input type="number" id="cost_提拉米蘇杯" value="12">
+    售價 <input type="number" id="price_提拉米蘇杯" value="25">
+  </div>
+  <div>
+    雪媚娘 成本 <input type="number" id="cost_雪媚娘" value="9">
+    售價 <input type="number" id="price_雪媚娘" value="18">
+  </div>
+  <div>
+    紅糖糍粑 成本 <input type="number" id="cost_紅糖糍粑" value="7">
+    售價 <input type="number" id="price_紅糖糍粑" value="14">
+  </div>
+  <div>
+    奶茶凍 成本 <input type="number" id="cost_奶茶凍" value="8">
+    售價 <input type="number" id="price_奶茶凍" value="16">
+  </div>
+  <div>
+    桂花奶酪 成本 <input type="number" id="cost_桂花奶酪" value="9">
+    售價 <input type="number" id="price_桂花奶酪" value="17">
+  </div>
+  <div>
+    華夫餅 成本 <input type="number" id="cost_華夫餅" value="10">
+    售價 <input type="number" id="price_華夫餅" value="20">
+  </div>
 </div>
 
 <script>
@@ -227,11 +240,12 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// 記帳功能
+// 記帳功能 + 統計
 function updateTotals() {
   const rows = document.querySelectorAll('#salesTable tbody tr');
   let totalCost = 0, totalRevenue = 0;
   const today = document.getElementById('dateInput').value;
+
   rows.forEach(row => {
     const date = row.cells[0].textContent;
     if(date === today) {
@@ -239,6 +253,7 @@ function updateTotals() {
       totalRevenue += parseFloat(row.cells[5].textContent);
     }
   });
+
   document.getElementById('totalCost').textContent = totalCost;
   document.getElementById('totalRevenue').textContent = totalRevenue;
   document.getElementById('totalProfit').textContent = (totalRevenue - totalCost);
@@ -248,17 +263,21 @@ document.getElementById('addBtn').addEventListener('click', () => {
   const date = document.getElementById('dateInput').value;
   const product = selected.textContent;
   const qty = parseInt(document.getElementById('qtyInput').value);
+
   if(!date || !product || !qty){
     alert("請填寫完整資訊！");
     return;
   }
+
   const cost = parseFloat(document.getElementById('cost_' + product).value);
   const price = parseFloat(document.getElementById('price_' + product).value);
   const revenue = price * qty;
+
   const tbody = document.getElementById('salesTable').querySelector('tbody');
   const row = document.createElement('tr');
   row.innerHTML = `<td>${date}</td><td>${product}</td><td>${qty}</td><td>${cost}</td><td>${price}</td><td>${revenue}</td>`;
   tbody.appendChild(row);
+
   document.getElementById('qtyInput').value = 1;
   updateTotals();
 });
