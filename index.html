@@ -140,7 +140,7 @@ th {
 <!-- 主頁 -->
 <div id="mainApp" style="display:none;">
 
-  <!-- 前台銷售頁 -->
+  <!-- 銷售頁 -->
   <div id="page-sale">
 
     <div class="card">
@@ -238,9 +238,9 @@ let products=JSON.parse(localStorage.getItem("products"))||[
 
 let sales=JSON.parse(localStorage.getItem("sales"))||[];
 
-// ---------------- 使用者登入 ----------------
+// 進入 App
 function enterApp(){
-  const user=document.getElementById("userNameInput").value.trim();
+  const user = document.getElementById("userNameInput").value.trim();
   if(!user){ alert("請輸入姓名！"); return; }
   localStorage.setItem("currentUser", user);
   document.getElementById("userPage").style.display="none";
@@ -248,16 +248,16 @@ function enterApp(){
   updateSelect();
   renderSales();
   renderBackend();
-  showPage('sale'); // 預設進入前台
+  showPage('sale'); // 進前台
 }
 
-// ---------------- 前台新增銷售 ----------------
+// 新增銷售
 function addSale(){
   const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
 
   const d=document.getElementById("dateInput").value;
-  const i=parseInt(document.getElementById("productSelect").value);
+  const i=document.getElementById("productSelect").value;
   const q=parseInt(document.getElementById("qtyInput").value);
   if(!d || q<=0) return;
 
@@ -266,13 +266,13 @@ function addSale(){
   renderSales();
 }
 
-// ---------------- localStorage 保存 ----------------
+// localStorage 保存
 function save(){
   localStorage.setItem("products", JSON.stringify(products));
   localStorage.setItem("sales", JSON.stringify(sales));
 }
 
-// ---------------- 更新商品下拉選單 ----------------
+// 更新商品下拉
 function updateSelect(){
   const s=document.getElementById("productSelect");
   s.innerHTML="";
@@ -284,7 +284,7 @@ function updateSelect(){
   });
 }
 
-// ---------------- 渲染銷售表 ----------------
+// 顯示銷售表
 function renderSales(){
   const list=document.getElementById("salesList");
   list.innerHTML="";
@@ -310,7 +310,6 @@ function renderSales(){
   document.getElementById("totalProfit").textContent=rev-cost;
 }
 
-// ---------------- 刪除銷售 ----------------
 function delSale(i){
   if(confirm("確定刪除？")){
     sales.splice(i,1);
@@ -319,7 +318,7 @@ function delSale(i){
   }
 }
 
-// ---------------- 後台解鎖 ----------------
+// 後台
 function unlockBackend(){
   const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
@@ -329,7 +328,6 @@ function unlockBackend(){
   } else alert("密碼錯誤");
 }
 
-// ---------------- 渲染後台商品 ----------------
 function renderBackend(){
   const box=document.getElementById("productList");
   box.innerHTML="";
@@ -348,7 +346,6 @@ function renderBackend(){
   });
 }
 
-// ---------------- 更新商品資料 ----------------
 function updateP(i,f,v){
   products[i][f]=parseFloat(v);
   save();
@@ -356,7 +353,6 @@ function updateP(i,f,v){
   renderSales();
 }
 
-// ---------------- 刪除商品 ----------------
 function delProduct(i){
   if(confirm("確定刪除？")){
     products.splice(i,1);
@@ -367,7 +363,6 @@ function delProduct(i){
   }
 }
 
-// ---------------- 新增商品 ----------------
 function addProduct(){
   const n=newName.value;
   const c=parseFloat(newCost.value);
@@ -380,7 +375,7 @@ function addProduct(){
   newName.value=newCost.value=newPrice.value="";
 }
 
-// ---------------- 頁面切換 ----------------
+// 顯示頁面
 function showPage(p){
   const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
@@ -388,7 +383,6 @@ function showPage(p){
   document.getElementById("page-sale").style.display = p==='sale' ? "block":"none";
   document.getElementById("page-admin").style.display = p==='admin' ? "block":"none";
 }
-
 </script>
 
 </body>
