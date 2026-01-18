@@ -6,22 +6,128 @@
 <title>甜點銷售記帳</title>
 
 <style>
-body { font-family:-apple-system,BlinkMacSystemFont,Arial; background:#f2f2f7; max-width:700px; margin:auto; padding:16px;}
-.card { background:#fff; border-radius:14px; padding:12px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center;}
-input, select, button { font-size:16px; height:44px; width:100%; box-sizing:border-box; border:none; border-radius:12px; background:#f2f2f7; text-align:center;}
-#dateInput, #productSelect, #filterStart, #filterEnd, #filterMonth { width:60%; max-width:300px; margin:0 auto; display:block; text-align:center; height:32px; line-height:32px; border-radius:8px; background:#fff;}
-#productSelect { text-align-last:center; -moz-text-align-last:center; -webkit-appearance:none; appearance:none;}
-table { width:100%; border-collapse:collapse;}
-th, td { border:1px solid #ccc; padding:6px; text-align:center;}
-th { background:#f0f0f0;}
-.product-card { border:1px solid #ddd; border-radius:12px; padding:10px; margin-bottom:10px;}
-.product-row { display:flex; justify-content:space-between; gap:4%;}
-.product-row div input { width:100%; margin-top:4px;}
-.bottom-tab { position:fixed; bottom:0; left:0; width:100%; display:flex; border-top:1px solid #ddd; background:#fff;}
-.bottom-tab button { flex:1; height:50px; border-radius:0;}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Arial;
+  background:#f2f2f7;
+  max-width:700px;
+  margin:auto;
+  padding:16px;
+}
+
+/* 通用卡片 */
+.card {
+  background:#fff;
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  text-align:center;
+}
+
+/* 輸入 */
+input, select, button {
+  font-size:16px;
+  height:44px;
+  width:100%;
+  box-sizing:border-box;
+  border:none;
+  border-radius:12px;
+  background:#f2f2f7;
+  text-align:center;
+}
+
+/* 日期 */
+#dateInput {
+  background:#fff;
+  border:none;
+  width:60%;
+  max-width:300px;
+  margin:0 auto;
+  display:block;
+  text-align:center;
+  height:32px;
+  line-height:32px;
+  border-radius:8px;
+}
+
+/* 商品選擇 */
+#productSelect {
+  width:60%;
+  max-width:300px;
+  margin:0 auto;
+  display:block;
+  text-align-last:center;
+  -moz-text-align-last:center;
+  -webkit-appearance:none;
+  appearance:none;
+  height:32px;
+  border-radius:8px;
+  background:#fff;
+}
+
+/* 表格 */
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+th, td {
+  border:1px solid #ccc;
+  padding:6px;
+  text-align:center;
+}
+th {
+  background:#f0f0f0;
+}
+
+/* 後台列 */
+.admin-row {
+  display:flex;
+  gap:10px;
+}
+.admin-row input,
+.admin-row button {
+  flex:1;
+}
+
+/* 商品卡片 */
+.product-card {
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+/* 商品成本/售價 */
+.product-row {
+  display:flex;
+  justify-content:space-between;
+  gap:4%;
+}
+.product-row div input {
+  width:100%;
+  margin-top:4px;
+}
+
+/* 底部按鈕 */
+.bottom-tab {
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  display:flex;
+  border-top:1px solid #ddd;
+  background:#fff;
+}
+.bottom-tab button {
+  flex:1;
+  height:50px;
+  border-radius:0;
+}
 </style>
 </head>
+
 <body>
+
 <h2 style="text-align:center">甜點銷售記帳</h2>
 
 <!-- 使用者頁 -->
@@ -36,21 +142,26 @@ th { background:#f0f0f0;}
 
   <!-- 銷售頁 -->
   <div id="page-sale">
+
     <div class="card">
       日期
       <input type="date" id="dateInput">
     </div>
+
     <div class="card">
       商品
       <select id="productSelect"></select>
     </div>
+
     <div class="card">
       份數
       <input type="number" id="qtyInput" min="1" value="1">
     </div>
+
     <div class="card">
       <button onclick="addSale()">新增銷售</button>
     </div>
+
     <div class="card">
       <table>
         <thead>
@@ -61,51 +172,53 @@ th { background:#f0f0f0;}
         <tbody id="salesList"></tbody>
       </table>
     </div>
+
     <div class="card">
       今日成本：<span id="totalCost">0</span><br>
       今日收入：<span id="totalRevenue">0</span><br>
       今日利潤：<span id="totalProfit">0</span>
     </div>
+
   </div>
 
   <!-- 後台頁 -->
   <div id="page-admin" style="display:none">
+
     <div class="card">
-      <input type="password" id="adminPwd" placeholder="後台密碼">
-      <button onclick="unlockBackend()">進入後台</button>
+      <div class="admin-row">
+        <input type="password" id="adminPwd" placeholder="後台密碼">
+        <button onclick="unlockBackend()">進入後台</button>
+      </div>
     </div>
+
     <div id="backend" style="display:none" class="card">
       <h3>商品管理</h3>
       <div id="productList"></div>
+
       <div class="product-card">
         <div style="margin-bottom:6px; font-weight:bold;">新增商品</div>
         <div class="product-row">
-          <div style="flex:1; text-align:center;">商品名稱<input id="newName" placeholder="名稱"></div>
-          <div style="flex:1; text-align:center;">成本<input id="newCost" type="number" placeholder="成本"></div>
-          <div style="flex:1; text-align:center;">售價<input id="newPrice" type="number" placeholder="售價"></div>
+          <div style="flex:1; text-align:center;">商品名稱
+            <input id="newName" placeholder="名稱">
+          </div>
+          <div style="flex:1; text-align:center;">成本
+            <input id="newCost" type="number" placeholder="成本">
+          </div>
+          <div style="flex:1; text-align:center;">售價
+            <input id="newPrice" type="number" placeholder="售價">
+          </div>
         </div>
         <button onclick="addProduct()" style="margin-top:6px;">新增商品</button>
       </div>
     </div>
+
   </div>
 
-  <!-- 統計/匯出頁 -->
+  <!-- 報表頁 -->
   <div id="page-report" style="display:none;">
     <div class="card">
-      <h3>銷售彙總</h3>
-      <div style="margin-bottom:12px;">
-        開始日期<input type="date" id="filterStart">
-        結束日期<input type="date" id="filterEnd">
-        或選月份<input type="month" id="filterMonth">
-        <button onclick="renderReport()">套用篩選</button>
-      </div>
-      <table>
-        <thead>
-          <tr><th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>人員</th></tr>
-        </thead>
-        <tbody id="reportList"></tbody>
-      </table>
-      <button onclick="exportExcel()">匯出 Excel (.xlsx)</button>
+      <h3>銷售彙總報表</h3>
+      <div id="reportContent"></div>
     </div>
   </div>
 
@@ -113,51 +226,59 @@ th { background:#f0f0f0;}
   <div class="bottom-tab">
     <button onclick="showPage('sale')">前台</button>
     <button onclick="showPage('admin')">後台</button>
-    <button onclick="showPage('report')">報表</button>
+    <button onclick="unlockReport()">報表</button>
   </div>
-</div>
 
-<!-- XLSX.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</div>
 
 <script>
 const adminPassword="1234";
+
 let products=JSON.parse(localStorage.getItem("products"))||[
-  {name:"雞蛋糕",cost:20,price:50},{name:"奶酪杯",cost:25,price:60},{name:"提拉米蘇杯",cost:30,price:70},
-  {name:"雪媚娘",cost:25,price:55},{name:"紅糖糍粑",cost:15,price:40},{name:"奶茶凍",cost:20,price:50},
-  {name:"桂花奶酪",cost:25,price:60},{name:"華夫餅",cost:30,price:65}
+  {name:"雞蛋糕",cost:20,price:50},
+  {name:"奶酪杯",cost:25,price:60},
+  {name:"提拉米蘇杯",cost:30,price:70},
+  {name:"雪媚娘",cost:25,price:55},
+  {name:"紅糖糍粑",cost:15,price:40},
+  {name:"奶茶凍",cost:20,price:50},
+  {name:"桂花奶酪",cost:25,price:60},
+  {name:"華夫餅",cost:30,price:65}
 ];
+
 let sales=JSON.parse(localStorage.getItem("sales"))||[];
 
 // 進入 App
 function enterApp(){
-  const user=document.getElementById("userNameInput").value.trim();
+  const user = document.getElementById("userNameInput").value.trim();
   if(!user){ alert("請輸入姓名！"); return; }
-  localStorage.setItem("currentUser",user);
+  localStorage.setItem("currentUser", user);
   document.getElementById("userPage").style.display="none";
   document.getElementById("mainApp").style.display="block";
   updateSelect();
   renderSales();
   renderBackend();
-  showPage('sale');
+  showPage('sale'); // 進前台
 }
 
-// 前台新增銷售
+// 新增銷售
 function addSale(){
-  const user=localStorage.getItem("currentUser");
+  const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
+
   const d=document.getElementById("dateInput").value;
   const i=document.getElementById("productSelect").value;
   const q=parseInt(document.getElementById("qtyInput").value);
   if(!d || q<=0) return;
+
   sales.push({d,i,q,user});
-  save(); renderSales();
+  save();
+  renderSales();
 }
 
 // localStorage 保存
 function save(){
-  localStorage.setItem("products",JSON.stringify(products));
-  localStorage.setItem("sales",JSON.stringify(sales));
+  localStorage.setItem("products", JSON.stringify(products));
+  localStorage.setItem("sales", JSON.stringify(sales));
 }
 
 // 更新商品下拉
@@ -166,22 +287,31 @@ function updateSelect(){
   s.innerHTML="";
   products.forEach((p,i)=>{
     const o=document.createElement("option");
-    o.value=i; o.textContent=p.name;
+    o.value=i;
+    o.textContent=p.name;
     s.appendChild(o);
   });
 }
 
-// 渲染銷售表
+// 顯示銷售表
 function renderSales(){
   const list=document.getElementById("salesList");
   list.innerHTML="";
   let cost=0, rev=0;
   sales.forEach((s,idx)=>{
     const p=products[s.i];
-    if(!p) return;
-    const r=p.price*s.q; cost+=p.cost*s.q; rev+=r;
+    const r=p.price*s.q;
+    cost+=p.cost*s.q;
+    rev+=r;
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${s.d}</td><td>${p.name}</td><td>${s.q}</td><td>${r}</td><td>${s.user}</td><td><button onclick="delSale(${idx})">刪除</button></td>`;
+    tr.innerHTML=`
+      <td>${s.d.slice(5)}</td>
+      <td>${p.name}</td>
+      <td>${s.q}</td>
+      <td>${r}</td>
+      <td>${s.user}</td>
+      <td><button onclick="delSale(${idx})">刪除</button></td>
+    `;
     list.appendChild(tr);
   });
   document.getElementById("totalCost").textContent=cost;
@@ -190,15 +320,21 @@ function renderSales(){
 }
 
 function delSale(i){
-  if(confirm("確定刪除？")){ sales.splice(i,1); save(); renderSales(); }
+  if(confirm("確定刪除？")){
+    sales.splice(i,1);
+    save();
+    renderSales();
+  }
 }
 
 // 後台
 function unlockBackend(){
-  const user=localStorage.getItem("currentUser");
+  const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
+
   if(document.getElementById("adminPwd").value===adminPassword){
     document.getElementById("backend").style.display="block";
+    showPage('admin');
   } else alert("密碼錯誤");
 }
 
@@ -206,63 +342,94 @@ function renderBackend(){
   const box=document.getElementById("productList");
   box.innerHTML="";
   products.forEach((p,i)=>{
-    const d=document.createElement("div"); d.className="product-card";
-    d.innerHTML=`<div style="margin-bottom:6px;font-weight:bold;">${p.name}</div>
+    const d=document.createElement("div");
+    d.className="product-card";
+    d.innerHTML=`
+      <div style="margin-bottom:6px; font-weight:bold;">${p.name}</div>
       <div class="product-row">
-        <div style="flex:1;text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
-        <div style="flex:1;text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
+        <div style="flex:1; text-align:center;">成本<input value="${p.cost}" onchange="updateP(${i},'cost',this.value)"></div>
+        <div style="flex:1; text-align:center;">售價<input value="${p.price}" onchange="updateP(${i},'price',this.value)"></div>
       </div>
-      <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>`;
+      <button onclick="delProduct(${i})" style="margin-top:6px;">刪除商品</button>
+    `;
     box.appendChild(d);
   });
 }
 
-function updateP(i,f,v){ products[i][f]=parseFloat(v); save(); updateSelect(); renderSales(); }
-function delProduct(i){ if(confirm("確定刪除？")){ products.splice(i,1); save(); updateSelect(); renderBackend(); renderSales(); } }
-function addProduct(){ const n=newName.value; const c=parseFloat(newCost.value); const p=parseFloat(newPrice.value); if(!n||!c||!p) return; products.push({name:n,cost:c,price:p}); save(); updateSelect(); renderBackend(); newName.value=newCost.value=newPrice.value=""; }
+function updateP(i,f,v){
+  products[i][f]=parseFloat(v);
+  save();
+  updateSelect();
+  renderSales();
+}
 
-// 切換頁面
-function showPage(p){
-  const user=localStorage.getItem("currentUser");
+function delProduct(i){
+  if(confirm("確定刪除？")){
+    products.splice(i,1);
+    save();
+    updateSelect();
+    renderBackend();
+    renderSales();
+  }
+}
+
+function addProduct(){
+  const n=newName.value;
+  const c=parseFloat(newCost.value);
+  const p=parseFloat(newPrice.value);
+  if(!n||!c||!p) return;
+  products.push({name:n,cost:c,price:p});
+  save();
+  updateSelect();
+  renderBackend();
+  newName.value=newCost.value=newPrice.value="";
+}
+
+// 報表頁密碼解鎖
+function unlockReport(){
+  const user = localStorage.getItem("currentUser");
   if(!user){ alert("請先輸入使用者名稱！"); return; }
+
+  const pwd = prompt("請輸入報表密碼");
+  if(pwd===adminPassword){
+    showPage('report');
+    renderReport();
+  } else {
+    alert("密碼錯誤！");
+  }
+}
+
+function renderReport(){
+  const content=document.getElementById("reportContent");
+  content.innerHTML="";
+  if(sales.length===0){
+    content.innerHTML="<p>尚無銷售資料</p>";
+    return;
+  }
+  let html="<table><thead><tr><th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>人員</th></tr></thead><tbody>";
+  sales.forEach(s=>{
+    const p=products[s.i];
+    const r=p.price*s.q;
+    html+=`<tr>
+      <td>${s.d}</td>
+      <td>${p.name}</td>
+      <td>${s.q}</td>
+      <td>${r}</td>
+      <td>${s.user}</td>
+    </tr>`;
+  });
+  html+="</tbody></table>";
+  content.innerHTML=html;
+}
+
+// 顯示頁面
+function showPage(p){
+  const user = localStorage.getItem("currentUser");
+  if(!user){ alert("請先輸入使用者名稱！"); return; }
+
   document.getElementById("page-sale").style.display = p==='sale' ? "block":"none";
   document.getElementById("page-admin").style.display = p==='admin' ? "block":"none";
   document.getElementById("page-report").style.display = p==='report' ? "block":"none";
-}
-
-// 報表渲染
-function renderReport(){
-  const list=document.getElementById("reportList");
-  list.innerHTML="";
-  const start=document.getElementById("filterStart").value;
-  const end=document.getElementById("filterEnd").value;
-  const month=document.getElementById("filterMonth").value;
-  sales.forEach(s=>{
-    const p=products[s.i]; if(!p) return;
-    if(start && s.d<start) return; if(end && s.d>end) return;
-    if(month && !s.d.startsWith(month)) return;
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${s.d}</td><td>${p.name}</td><td>${s.q}</td><td>${p.price*s.q}</td><td>${s.user}</td>`;
-    list.appendChild(tr);
-  });
-}
-
-// 匯出 Excel
-function exportExcel(){
-  const wb=XLSX.utils.book_new();
-  const ws_data=[["日期","商品","份數","收入","人員"]];
-  const start=document.getElementById("filterStart").value;
-  const end=document.getElementById("filterEnd").value;
-  const month=document.getElementById("filterMonth").value;
-  sales.forEach(s=>{
-    const p=products[s.i]; if(!p) return;
-    if(start && s.d<start) return; if(end && s.d>end) return;
-    if(month && !s.d.startsWith(month)) return;
-    ws_data.push([s.d,p.name,s.q,p.price*s.q,s.user]);
-  });
-  const ws=XLSX.utils.aoa_to_sheet(ws_data);
-  XLSX.utils.book_append_sheet(wb,ws,"Sales");
-  XLSX.writeFile(wb,"sales.xlsx");
 }
 </script>
 
