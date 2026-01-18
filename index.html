@@ -2,15 +2,14 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>甜點銷售記帳</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>甜點銷售記帳 (手機版)</title>
 
 <style>
 body {
   font-family: -apple-system, BlinkMacSystemFont, Arial;
   background:#f2f2f7;
-  max-width:700px;
-  margin:auto;
+  margin:0;
   padding:16px;
 }
 
@@ -18,16 +17,17 @@ body {
 .card {
   background:#fff;
   border-radius:14px;
-  padding:12px;
-  margin-bottom:14px;
+  padding:16px;
+  margin-bottom:16px;
   box-shadow:0 2px 8px rgba(0,0,0,0.08);
   text-align:center;
+  width:100%;
 }
 
 /* 輸入 */
 input, select, button {
-  font-size:16px;
-  height:44px;
+  font-size:18px;
+  height:48px;
   width:100%;
   box-sizing:border-box;
   border:none;
@@ -40,27 +40,27 @@ input, select, button {
 #dateInput {
   background:#fff;
   border:none;
-  width:60%;
-  max-width:300px;
+  width:80%;
+  max-width:320px;
   margin:0 auto;
   display:block;
   text-align:center;
-  height:32px;
-  line-height:32px;
+  height:36px;
+  line-height:36px;
   border-radius:8px;
 }
 
 /* 商品選擇 */
 #productSelect {
-  width:60%;
-  max-width:300px;
+  width:80%;
+  max-width:320px;
   margin:0 auto;
   display:block;
   text-align-last:center;
   -moz-text-align-last:center;
   -webkit-appearance:none;
   appearance:none;
-  height:32px;
+  height:36px;
   border-radius:8px;
   background:#fff;
 }
@@ -69,11 +69,14 @@ input, select, button {
 table {
   width:100%;
   border-collapse:collapse;
+  overflow-x:auto;
+  display:block;
 }
 th, td {
   border:1px solid #ccc;
-  padding:6px;
+  padding:8px;
   text-align:center;
+  font-size:14px;
 }
 th {
   background:#f0f0f0;
@@ -82,19 +85,20 @@ th {
 /* 後台列 */
 .admin-row {
   display:flex;
-  gap:10px;
+  gap:8px;
+  flex-wrap:wrap;
 }
 .admin-row input,
 .admin-row button {
-  flex:1;
+  flex:1 1 48%;
 }
 
 /* 商品卡片 */
 .product-card {
   border:1px solid #ddd;
   border-radius:12px;
-  padding:10px;
-  margin-bottom:10px;
+  padding:12px;
+  margin-bottom:12px;
 }
 
 /* 商品成本/售價 */
@@ -102,10 +106,13 @@ th {
   display:flex;
   justify-content:space-between;
   gap:4%;
+  flex-wrap:wrap;
 }
 .product-row div input {
   width:100%;
   margin-top:4px;
+  font-size:16px;
+  height:36px;
 }
 
 /* 底部按鈕 */
@@ -117,11 +124,14 @@ th {
   display:flex;
   border-top:1px solid #ddd;
   background:#fff;
+  z-index:999;
 }
 .bottom-tab button {
   flex:1;
-  height:50px;
+  height:56px;
+  font-size:16px;
   border-radius:0;
+  border:none;
 }
 </style>
 </head>
@@ -245,6 +255,7 @@ th {
 </div>
 
 <script>
+// ====== 與之前相同的 JS ======
 const adminPassword="1234";
 
 let products=JSON.parse(localStorage.getItem("products"))||[
