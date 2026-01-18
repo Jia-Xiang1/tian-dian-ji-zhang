@@ -218,6 +218,19 @@ th {
   <div id="page-report" style="display:none;">
     <div class="card">
       <h3>銷售彙總報表</h3>
+      <!-- 篩選 -->
+      <div class="card">
+        <label>起始日期</label>
+        <input type="date" id="filterStart">
+        <label>結束日期</label>
+        <input type="date" id="filterEnd">
+        <button onclick="renderReport()">套用日期篩選</button>
+      </div>
+      <div class="card">
+        <label>月份 (YYYY-MM)</label>
+        <input type="month" id="filterMonth">
+        <button onclick="renderReportByMonth()">套用月份篩選</button>
+      </div>
       <div id="reportContent"></div>
     </div>
   </div>
@@ -399,15 +412,55 @@ function unlockReport(){
   }
 }
 
+// 顯示完整報表或日期篩選報表
 function renderReport(){
   const content=document.getElementById("reportContent");
   content.innerHTML="";
-  if(sales.length===0){
+
+  const start=document.getElementById("filterStart").value;
+  const end=document.getElementById("filterEnd").value;
+
+  let filtered=sales;
+  if(start) filtered=filtered.filter(s=>s.d>=start);
+  if(end) filtered=filtered.filter(s=>s.d<=end);
+
+  if(filtered.length===0){
     content.innerHTML="<p>尚無銷售資料</p>";
     return;
   }
+
   let html="<table><thead><tr><th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>人員</th></tr></thead><tbody>";
-  sales.forEach(s=>{
+  filtered.forEach(s=>{
+    const p=products[s.i];
+    const r=p.price*s.q;
+    html+=`<tr>
+      <td>${s.d}</td>
+      <td>${p.name}</td>
+      <td>${s.q}</td>
+      <td>${r}</td>
+      <td>${s.user}</td>
+    </tr>`;
+  });
+  html+="</tbody></table>";
+  content.innerHTML=html;
+}
+
+// 月份篩選報表
+function renderReportByMonth(){
+  const content=document.getElementById("reportContent");
+  content.innerHTML="";
+
+  const month=document.getElementById("filterMonth").value;
+  if(!month){ alert("請輸入月份"); return; }
+
+  const filtered=sales.filter(s=>s.d.startsWith(month));
+  if(filtered.length===0){
+    content.innerHTML="<p>該月份無銷售資料</p>";
+    return;
+  }
+
+  let html="<table><thead><tr><th>日期</th><th>商品</th><th>份數</th><th>收入</th><th>人員</th></tr></thead><tbody>";
+  filtered.forEach(s=>{
     const p=products[s.i];
     const r=p.price*s.q;
     html+=`<tr>
